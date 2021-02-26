@@ -1459,3 +1459,13 @@ a.purple-link {
   margin: 0 16px 16px 0;
   border-radius: 16px;
 }
+
+      a {
+    color: black;
+    -moz-transition:color 150ms linear;-webkit-transition:color 150ms linear;-o-transition:color 150ms linear;transition:color 150ms linear;
+}
+ 
+a:active,a:hover {
+    color: blue;
+}
+    

@@ -1163,7 +1163,7 @@ a:active,
 }
 a.purple-link {
   position: relative;
-  background: linear-gradient(180deg, transparent 70%, rgba(101, 125, 225, 0.4) 0);
+  background: linear-gradient(180deg, transparent 100%, rgba(101, 125, 225, 0.4) 0);
 }
 .main {
   max-width: 768px;
@@ -1275,7 +1275,7 @@ a.purple-link {
   display: flex;
   align-items: center;
   padding: 2px 8px;
-  background: linear-gradient(180deg, transparent 70%, rgba(101, 125, 225, 0.4) 0);
+  background: linear-gradient(180deg, transparent 100%, rgba(101, 125, 225, 0.4) 0);
 }
 .pagination-container .prev {
   float: left;
@@ -1319,7 +1319,7 @@ a.purple-link {
 }
 .post-content a {
   font-weight: 600;
-  background: linear-gradient(180deg, transparent 70%, rgba(101, 125, 225, 0.4) 0);
+  background: linear-gradient(180deg, transparent 100%, rgba(101, 125, 225, 0.4) 0);
 }
 .post-content img {
   display: block;

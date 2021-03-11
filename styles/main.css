@@ -1460,12 +1460,18 @@ a.purple-link {
   border-radius: 16px;
 }
 
+      .main {
+        max-width: 900px;
+      }
+    
       a {
     color: black;
     -moz-transition:color 150ms linear;-webkit-transition:color 150ms linear;-o-transition:color 150ms linear;transition:color 150ms linear;
 }
- 
 a:active,a:hover {
     color: blue;
+}
+.site-header{
+    max-width: 900px;
 }
     

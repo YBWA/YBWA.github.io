@@ -1472,7 +1472,7 @@ a.purple-link {
     color:#545454 !important;
 }
 .hljs-title {
-    color:#0086b3 !important;
+    color:#4271ae !important;
 }
 .hljs-number {
     color:#f09642 !important;
@@ -1481,9 +1481,18 @@ a.purple-link {
      color:#f09642 !important;
 }
 .hljs-keyword {
-    color:#86c1b9 !important;
+    color:#8959a8 !important;
 }
 .hljs-meta {
-    color:#BA8CAF !important;
+    color:#8959a8 !important;
+}
+.hljs-meta-string {
+    color:#718c00 !important;
+}
+.hljs-built_in {
+    color:#4271ae !important;
+}
+.hljs-operator {
+    color:#3e999f !important;
 }
     

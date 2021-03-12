@@ -251,7 +251,7 @@ summary {
 .hljs-selector-tag,
 .hljs-subst {
   color: #333;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 .hljs-number,
 .hljs-literal,
@@ -268,7 +268,7 @@ summary {
 .hljs-section,
 .hljs-selector-id {
   color: #900;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 .hljs-subst {
   font-weight: normal;
@@ -276,7 +276,7 @@ summary {
 .hljs-type,
 .hljs-class .hljs-title {
   color: #458;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 .hljs-tag,
 .hljs-name,
@@ -298,7 +298,7 @@ summary {
 }
 .hljs-meta {
   color: #999;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 .hljs-deletion {
   background: #fdd;
@@ -1464,14 +1464,26 @@ a.purple-link {
         max-width: 900px;
       }
     
-      a {
-    color: black;
-    -moz-transition:color 150ms linear;-webkit-transition:color 150ms linear;-o-transition:color 150ms linear;transition:color 150ms linear;
-}
-a:active,a:hover {
-    color: blue;
-}
-.site-header{
+      .site-header{
     max-width: 900px;
+}
+.hljs {
+    font-size:17px !important ;
+    color:#545454 !important;
+}
+.hljs-title {
+    color:#0086b3 !important;
+}
+.hljs-number {
+    color:#f09642 !important;
+}
+.hljs-string {
+     color:#f09642 !important;
+}
+.hljs-keyword {
+    color:#86c1b9 !important;
+}
+.hljs-meta {
+    color:#BA8CAF !important;
 }
     

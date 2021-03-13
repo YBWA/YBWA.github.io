@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ybwa.github.io</id>
     <title>yb&apos;s blog</title>
-    <updated>2021-03-13T12:36:43.278Z</updated>
+    <updated>2021-03-13T12:55:56.250Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ybwa.github.io"/>
     <link rel="self" href="https://ybwa.github.io/atom.xml"/>
@@ -16,7 +16,7 @@
         </link>
         <updated>2021-03-13T12:07:24.000Z</updated>
         <content type="html"><![CDATA[<h1 id="分块">分块</h1>
-<p>所谓数列分块，就是将一个数列分成若干块 <s>（废话）</s>，通过块的整体操作和边界的局部暴力，达到优化时间复杂度的问题。通过LOJ的<a href="https://loj.ac/p?keyword=%E6%95%B0%E5%88%97%E5%88%86%E5%9D%97%E5%85%A5%E9%97%A8">数列分块入门系列-&gt;</a>，我们对数列分块系列进行一定的了解。</p>
+<p>所谓数列分块，就是将一个数列分成若干块~~（废话）~~，通过块的整体操作和边界的局部暴力，达到优化时间复杂度的问题。通过LOJ的<a href="https://loj.ac/p?keyword=%E6%95%B0%E5%88%97%E5%88%86%E5%9D%97%E5%85%A5%E9%97%A8">数列分块入门系列</a>，我们对数列分块系列进行一定的了解。</p>
 <h2 id="数列分块入门-1">数列分块入门 1</h2>
 <p>题意：要求实现区间加值，单点查询。</p>
 <p>sol：将整个数列分为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msqrt><mi>n</mi></msqrt></mrow><annotation encoding="application/x-tex">\sqrt{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.23972em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8002800000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathdefault">n</span></span></span><span style="top:-2.76028em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
@@ -30,14 +30,26 @@ s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class=
 #define N 50010
 using namespace std;
 int n,a[N],pls[N],pos[N],L[N],R[N];
-void add(int l,int r,int v) {
-	int p=pos[l],q=pos[r];
-	if (p==q) {
+//L,R记录每个块的左右边界,pos存储每个数所在的块的编号
+void build() { //分块
+	int t=sqrt(n);
+	for (int i=1;i&lt;=t;i++) { //记录左右边界
+		L[i]=(i-1)*t+1;
+		R[i]=i*t;
+	}
+	if (R[t]&lt;n) L[++t]=R[t-1]+1,R[t]=n; //处理分块的多余部分
+	for (int i=1;i&lt;=t;i++) {
+		for (int j=L[i];j&lt;=R[i];j++) pos[j]=i; //处理pos数组
+	}
+}
+void add(int l,int r,int v) { //区间加值
+	int p=pos[l],q=pos[r]; 
+	if (p==q) { //如果两数在同一块暴力处理
 		for (int i=l;i&lt;=r;i++) a[i]+=v;
 		return;
 	}
-	for (int i=p+1;i&lt;=q-1;i++) pls[i]+=v;
-	for (int i=l;i&lt;=R[p];i++) a[i]+=v;
+	for (int i=p+1;i&lt;=q-1;i++) pls[i]+=v; //整块处理
+	for (int i=l;i&lt;=R[p];i++) a[i]+=v; //边界暴力处理
 	for (int i=L[q];i&lt;=r;i++) a[i]+=v;
 }
 int ask(int x) {
@@ -48,15 +60,7 @@ signed main() {
 	for (int i=1;i&lt;=n;i++) {
 		scanf(&quot;%d&quot;,&amp;a[i]);
 	}
-	int t=sqrt(n);
-	for (int i=1;i&lt;=t;i++) {
-		L[i]=(i-1)*t+1;
-		R[i]=i*t;
-	}
-	if (R[t]&lt;n) L[++t]=R[t-1]+1,R[t]=n;
-	for (int i=1;i&lt;=t;i++) {
-		for (int j=L[i];j&lt;=R[i];j++) pos[j]=i;
-	}
+	build();
 	for (int i=1;i&lt;=n;i++) {
 		int opt,l,r,c;
 		scanf(&quot;%d%d%d%d&quot;,&amp;opt,&amp;l,&amp;r,&amp;c);
@@ -108,7 +112,7 @@ void build() {
 		sort(v[i].begin(),v[i].end());
 	}
 }
-void change(int id,int l,int r,int x) {
+void change(int id,int l,int r,int x) { //暴力修改并重构
 	for (int i=l;i&lt;=r;i++) a[i]+=x;
 	v[id].clear();
 	for (int i=L[id];i&lt;=R[id];i++)
@@ -129,6 +133,8 @@ int ask(int l,int r,int x,int ans=0) {
 	}
 	for (int i=p+1;i&lt;=q-1;i++)
 		ans+=(lower_bound(v[i].begin(),v[i].end(),x-pls[i])-v[i].begin());
+	     /* lower_bound是std自带的二分,与sort用法类似，复杂度O(logn),返回第一个
+	     大于等于查询值的地址，减去开头地址即为下标，再减一就是第一个小于查询值的地址 */
 	for (int i=l;i&lt;=R[p];i++) if (a[i]+pls[p]&lt;x) ans++;
 	for (int i=L[q];i&lt;=r;i++) if (a[i]+pls[q]&lt;x) ans++;
 	return ans;

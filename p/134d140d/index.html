@@ -19,25 +19,23 @@
   <meta name="author" content="yb">
   <meta name="keywords" content="">
   
-    <meta name="description" content="如题，经过巨佬的指导和我的不懈贺贺贺，我得到了一个很 sb 的矩乘封装！ #define P 998244353 #define L long long  struct Mat &#123;     int n, m;     vector&lt;vector&lt;int&gt; &gt; a;     Mat(): n(0), m(0), a(vector&lt;vector&lt;int&gt; &gt;()) &amp;">
+    <meta name="description" content="fast_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s all">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我（贺来）的 sb 矩乘封装">
-<meta property="og:url" content="https://ybwa.github.io/p/791ce38f/index.html">
+<meta property="og:title" content="how2heap 学习笔记">
+<meta property="og:url" content="https://ybwa.github.io/p/134d140d/index.html">
 <meta property="og:site_name" content="YB">
-<meta property="og:description" content="如题，经过巨佬的指导和我的不懈贺贺贺，我得到了一个很 sb 的矩乘封装！ #define P 998244353 #define L long long  struct Mat &#123;     int n, m;     vector&lt;vector&lt;int&gt; &gt; a;     Mat(): n(0), m(0), a(vector&lt;vector&lt;int&gt; &gt;()) &amp;">
+<meta property="og:description" content="fast_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s all">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-22T05:39:30.000Z">
-<meta property="article:modified_time" content="2025-12-29T06:34:39.000Z">
+<meta property="article:published_time" content="2026-01-28T06:15:03.000Z">
+<meta property="article:modified_time" content="2026-01-28T06:33:07.220Z">
 <meta property="article:author" content="yb">
-<meta property="article:tag" content="数学">
-<meta property="article:tag" content="矩阵">
-<meta property="article:tag" content="矩阵乘法">
-<meta property="article:tag" content="语法">
+<meta property="article:tag" content="Heap">
+<meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>我（贺来）的 sb 矩乘封装 - YB</title>
+  <title>how2heap 学习笔记 - YB</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -219,7 +217,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="我（贺来）的 sb 矩乘封装"></span>
+            <span id="subtitle" data-typed-text="how2heap 学习笔记"></span>
           
         </div>
 
@@ -230,8 +228,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-03-22 13:39" pubdate>
-          2022年3月22日 下午
+        <time datetime="2026-01-28 14:15" pubdate>
+          2026年1月28日 下午
         </time>
       </span>
     
@@ -242,7 +240,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          290 字
+          269 字
         
       </span>
     
@@ -290,48 +288,52 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">我（贺来）的 sb 矩乘封装</h1>
+            <h1 id="seo-header">how2heap 学习笔记</h1>
             
             
               <div class="markdown-body">
                 
-                <p>如题，经过巨佬的指导和我的不懈贺贺贺，我得到了一个很 sb 的矩乘封装！</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">P</span> <span class="token expression"><span class="token number">998244353</span></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">L</span> <span class="token expression"><span class="token keyword">long</span> <span class="token keyword">long</span></span></span>
+                <h2 id="fast_fitc"><a class="markdownIt-Anchor" href="#fast_fitc"></a> fast_fit.c</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
 
-<span class="token keyword">struct</span> <span class="token class-name">Mat</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">int</span> n<span class="token punctuation">,</span> m<span class="token punctuation">;</span>
-    vector<span class="token operator">&lt;</span>vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">></span> a<span class="token punctuation">;</span>
-    <span class="token function">Mat</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token function">n</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">m</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">a</span><span class="token punctuation">(</span><span class="token generic-function"><span class="token function">vector</span><span class="token generic class-name"><span class="token operator">&lt;</span>vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
-    <span class="token function">Mat</span><span class="token punctuation">(</span><span class="token keyword">int</span> n<span class="token punctuation">,</span> <span class="token keyword">int</span> m<span class="token punctuation">)</span><span class="token operator">:</span> <span class="token function">n</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">m</span><span class="token punctuation">(</span>m<span class="token punctuation">)</span><span class="token punctuation">,</span> 
-        <span class="token function">a</span><span class="token punctuation">(</span><span class="token generic-function"><span class="token function">vector</span><span class="token generic class-name"><span class="token operator">&lt;</span>vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> <span class="token operator">></span></span></span><span class="token punctuation">(</span>n <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token generic-function"><span class="token function">vector</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span></span></span><span class="token punctuation">(</span>m <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
-    vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span><span class="token operator">&amp;</span> <span class="token keyword">operator</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token punctuation">&#123;</span> <span class="token keyword">return</span> a<span class="token punctuation">[</span>x<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
-    <span class="token keyword">const</span> vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span><span class="token operator">&amp;</span> <span class="token keyword">operator</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">)</span> <span class="token keyword">const</span><span class="token operator">&amp;</span> <span class="token punctuation">&#123;</span> <span class="token keyword">return</span> a<span class="token punctuation">[</span>x<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
-    Mat <span class="token keyword">operator</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token keyword">const</span> Mat <span class="token operator">&amp;</span>b<span class="token punctuation">)</span> <span class="token keyword">const</span> <span class="token punctuation">&#123;</span>
-        Mat <span class="token function">r</span><span class="token punctuation">(</span>n<span class="token punctuation">,</span> b<span class="token punctuation">.</span>m<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span>
-            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> k <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> k <span class="token operator">&lt;=</span> m<span class="token punctuation">;</span> k <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-                <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> b<span class="token punctuation">.</span>m<span class="token punctuation">;</span> j <span class="token operator">++</span><span class="token punctuation">)</span>
-                    r<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>L<span class="token punctuation">)</span>r<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token punctuation">(</span>L<span class="token punctuation">)</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">*</span> <span class="token punctuation">(</span>L<span class="token punctuation">)</span>b<span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">%</span> P <span class="token operator">+</span> P<span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">;</span>
-                <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> r<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    Mat <span class="token keyword">operator</span><span class="token operator">^</span><span class="token punctuation">(</span><span class="token keyword">int</span> k<span class="token punctuation">)</span> <span class="token keyword">const</span> <span class="token punctuation">&#123;</span>
-        Mat <span class="token function">r</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> x <span class="token operator">=</span> <span class="token operator">*</span><span class="token keyword">this</span><span class="token punctuation">;</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token punctuation">;</span> k<span class="token punctuation">;</span> k <span class="token operator">>>=</span> <span class="token number">1</span><span class="token punctuation">,</span> x <span class="token operator">=</span> x <span class="token operator">*</span> x<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>k <span class="token operator">&amp;</span> <span class="token number">1</span><span class="token punctuation">)</span> r <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">!</span>r<span class="token punctuation">.</span>n<span class="token punctuation">)</span> <span class="token operator">?</span> r <span class="token operator">=</span> x <span class="token operator">:</span> r <span class="token operator">*</span> x<span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        <span class="token keyword">return</span> r<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
-<p>这么 sb 的代码有什么 sb 的功能吗？有！！！来康！</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">Mat <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 通过构造函数定义大小，数组从 1 开始</span>
-foo<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">114514</span><span class="token punctuation">;</span> <span class="token comment">// 重载中括号运算符，直接访问数组</span>
-Mat <span class="token function">a</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">b</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-Mat c <span class="token operator">=</span> a <span class="token operator">*</span> b<span class="token punctuation">;</span> <span class="token comment">// 直接乘！</span>
-Mat c <span class="token operator">=</span> a <span class="token operator">^</span> <span class="token number">3</span> <span class="token comment">// 矩阵快速幂！！！</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
-<p>还有一点，矩乘的时候修改了枚举顺序据说会更快！</p>
-<p><s>这么 sb 的代码鬼才背得下来</s></p>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"This file doesn't demonstrate an attack, but shows the nature of glibc's allocator.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"glibc uses a first-fit algorithm to select a free chunk.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"If a chunk is free and large enough, malloc will select this chunk.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"This can be exploited in a use-after-free situation.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Allocating 2 buffers. They can be large, don't have to be fastbin.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">char</span><span class="token operator">*</span> a <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">0x512</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">char</span><span class="token operator">*</span> b <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">0x256</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">char</span><span class="token operator">*</span> c<span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"1st malloc(0x512): %p\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"2nd malloc(0x256): %p\n"</span><span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"we could continue mallocing here...\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"now let's put a string at a that we can read later \"this is A!\"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">strcpy</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> <span class="token string">"this is A!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"first allocation %p points to %s\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Freeing the first one...\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"We don't need to free anything again. As long as we allocate smaller than 0x512, it will end up at %p\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"So, let's allocate 0x500 bytes\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        c <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">0x500</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd malloc(0x500): %p\n"</span><span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"And put a different string here, \"this is C!\"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">strcpy</span><span class="token punctuation">(</span>c<span class="token punctuation">,</span> <span class="token string">"this is C!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd allocation %p points to %s\n"</span><span class="token punctuation">,</span> c<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"first allocation %p points to %s\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"If we reuse the first allocation, it now holds the data from the third allocation.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>Heap 由若干个chunk 构成，chunk 的第一个 qword 表示前一个 chunk 的大小，第二个 qword 表示当前 chunk 的大小，第三个 qword 开始存储用户的数据。</p>
+<p>由于 chunk 向 16 位（或 8 位）对齐，chunk 大小的最后 3 位必定为 0，用以存储标志位 AMP，其中最低位 P 表示 PREV_INUSE，前一 chunk 是否被使用（1/0）。</p>
+<p><code>malloc</code> 会向 Heap 中请求一块 chunk，如果在存在空闲的足够大的 chunk 则会优先分配。</p>
 
                 
               </div>
@@ -340,38 +342,13 @@ Mat c <span class="token operator">=</span> a <span class="token operator">^</sp
             <div>
               <div class="post-metas my-3">
   
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E6%A8%A1%E6%9D%BF/" class="category-chain-item">模板</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
   
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E6%95%B0%E5%AD%A6/" class="print-no-link">#数学</a>
+        <a href="/tags/pwn/" class="print-no-link">#pwn</a>
       
-        <a href="/tags/%E8%AF%AD%E6%B3%95/" class="print-no-link">#语法</a>
-      
-        <a href="/tags/%E7%9F%A9%E9%98%B5/" class="print-no-link">#矩阵</a>
-      
-        <a href="/tags/%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/" class="print-no-link">#矩阵乘法</a>
+        <a href="/tags/Heap/" class="print-no-link">#Heap</a>
       
     </div>
   
@@ -383,8 +360,8 @@ Mat c <span class="token operator">=</span> a <span class="token operator">^</sp
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>我（贺来）的 sb 矩乘封装</div>
-      <div>https://ybwa.github.io/p/791ce38f/</div>
+      <div>how2heap 学习笔记</div>
+      <div>https://ybwa.github.io/p/134d140d/</div>
     </div>
     <div class="license-meta">
       
@@ -396,7 +373,7 @@ Mat c <span class="token operator">=</span> a <span class="token operator">^</sp
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年3月22日</div>
+          <div>2026年1月28日</div>
         </div>
       
       
@@ -440,18 +417,12 @@ Mat c <span class="token operator">=</span> a <span class="token operator">^</sp
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/p/e40158ce/" title="CF1392 A-E">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">CF1392 A-E</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/p/94734546/" title="CF1654CDE 题解">
-                        <span class="hidden-mobile">CF1654CDE 题解</span>
+                      <a href="/p/7d307027/" title="几题">
+                        <span class="hidden-mobile">几题</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

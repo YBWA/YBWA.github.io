@@ -47,8 +47,6 @@
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
 
-  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-
   <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
@@ -296,7 +294,7 @@
               <div class="markdown-body">
                 
                 <p>如题，经过巨佬的指导和我的不懈贺贺贺，我得到了一个很 sb 的矩乘封装！</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">P</span> <span class="token expression"><span class="token number">998244353</span></span></span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">P</span> <span class="token expression"><span class="token number">998244353</span></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">L</span> <span class="token expression"><span class="token keyword">long</span> <span class="token keyword">long</span></span></span>
 
 <span class="token keyword">struct</span> <span class="token class-name">Mat</span> <span class="token punctuation">&#123;</span>
@@ -323,13 +321,13 @@
         <span class="token punctuation">&#125;</span>
         <span class="token keyword">return</span> r<span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre></div></figure>
 <p>这么 sb 的代码有什么 sb 的功能吗？有！！！来康！</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp">Mat <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 通过构造函数定义大小，数组从 1 开始</span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">Mat <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 通过构造函数定义大小，数组从 1 开始</span>
 foo<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">114514</span><span class="token punctuation">;</span> <span class="token comment">// 重载中括号运算符，直接访问数组</span>
 Mat <span class="token function">a</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">b</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 Mat c <span class="token operator">=</span> a <span class="token operator">*</span> b<span class="token punctuation">;</span> <span class="token comment">// 直接乘！</span>
-Mat c <span class="token operator">=</span> a <span class="token operator">^</span> <span class="token number">3</span> <span class="token comment">// 矩阵快速幂！！！</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+Mat c <span class="token operator">=</span> a <span class="token operator">^</span> <span class="token number">3</span> <span class="token comment">// 矩阵快速幂！！！</span></code></pre></div></figure>
 <p>还有一点，矩乘的时候修改了枚举顺序据说会更快！</p>
 <p><s>这么 sb 的代码鬼才背得下来</s></p>
 
@@ -652,8 +650,6 @@ Mat c <span class="token operator">=</span> a <span class="token operator">^</sp
   });
 </script>
 
-
-  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

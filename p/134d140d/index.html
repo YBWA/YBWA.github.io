@@ -27,7 +27,7 @@
 <meta property="og:description" content="first_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the nature of glibc&#39;s al">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-01-28T06:15:03.000Z">
-<meta property="article:modified_time" content="2026-03-15T17:10:56.912Z">
+<meta property="article:modified_time" content="2026-03-28T18:01:12.000Z">
 <meta property="article:author" content="yb">
 <meta property="article:tag" content="Heap">
 <meta property="article:tag" content="pwn">
@@ -44,8 +44,6 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
@@ -294,7 +292,7 @@
               <div class="markdown-body">
                 
                 <h2 id="first_fitc"><a class="markdownIt-Anchor" href="#first_fitc"></a> first_fit.c</h2>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
 
@@ -330,10 +328,10 @@
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd allocation %p points to %s\n"</span><span class="token punctuation">,</span> c<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"first allocation %p points to %s\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"If we reuse the first allocation, it now holds the data from the third allocation.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span></code></pre></div></figure>
 <p>Heap 由若干个chunk 构成，chunk 的第一个 qword 表示前一个 chunk 的大小，第二个 qword 表示当前 chunk 的大小，第三个 qword 开始存储用户的数据。</p>
 <p>由于 chunk 向 16 位（或 8 位）对齐，chunk 大小的最后 3 位必定为 0，用以存储标志位 AMP，其中最低位 P 表示 PREV_INUSE，前一 chunk 是否被使用（1/0）。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span> <span class="token punctuation">&#123;</span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span> <span class="token punctuation">&#123;</span>
 
   INTERNAL_SIZE_T      prev_size<span class="token punctuation">;</span>  <span class="token comment">/* Size of previous chunk (if free).  */</span>
   INTERNAL_SIZE_T      size<span class="token punctuation">;</span>       <span class="token comment">/* Size in bytes, including overhead. */</span>
@@ -344,11 +342,11 @@
   <span class="token comment">/* Only used for large blocks: pointer to next larger size.  */</span>
   <span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span><span class="token operator">*</span> fd_nextsize<span class="token punctuation">;</span> <span class="token comment">/* double links -- used only if free. */</span>
   <span class="token keyword">struct</span> <span class="token class-name">malloc_chunk</span><span class="token operator">*</span> bk_nextsize<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span></code></pre></div></figure>
 <p>chunk 被分配后从 <code>fd</code> 开始存储用户数据，空闲时 <code>fd</code> 和 <code>bk</code> 分别指向前后空闲的 chunk，用于维护一个空闲 chunk 的列表.</p>
 <p><code>malloc</code> 会向 Heap 中请求一块 chunk，分配器会从空闲堆链表头部开始遍历，找到第一块足够大的 chunk 就会分配（first_fit），多余的部分会分割成一个新的空闲 chunk。</p>
 <h2 id="fastbin_dupc"><a class="markdownIt-Anchor" href="#fastbin_dupc"></a> fastbin_dup.c</h2>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"This file demonstrates a simple double-free attack with fastbins.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -380,14 +378,14 @@
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"1st malloc(8): %p\n"</span><span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"2nd malloc(8): %p\n"</span><span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd malloc(8): %p\n"</span><span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span></code></pre></div></figure>
 <p>为了提高效率，较小的 chunk 释放后会被存入 fastbin，fastbin 中的 chunk 的 <code>inuse</code> 位依旧为 1 不会与其他 chunk 合并。</p>
 <p>fastbin 为了快速响应频繁的小内存申请，采用 单向链表和 <strong>LIFO</strong> 维护。</p>
 <p>glibc 的 <code>free()</code> 有一个检测：当释放指针是 fastbin 链表头时会使得程序崩溃。</p>
 <p>但当释放指针不是表头时，就没有这个问题了，它将被第二次放入链表中。</p>
 <p>此时使用 <code>malloc()</code> 分配，将会得到相同的两个 chunk。</p>
 <h2 id="fastbin_dup_into_stackc"><a class="markdownIt-Anchor" href="#fastbin_dup_into_stackc"></a> fastbin_dup_into_stack.c</h2>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token punctuation">&#123;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"This file extends on fastbin_dup.c by tricking malloc into\n"</span>
                <span class="token string">"returning a pointer to a controlled location (in this case, the stack).\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -419,11 +417,11 @@
 
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"3rd malloc(8): %p, putting the stack address on the free list\n"</span><span class="token punctuation">,</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">"4th malloc(8): %p\n"</span><span class="token punctuation">,</span> <span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span></code></pre></div></figure>
 <p>使用上一个的方法，做到修改一个在 fastbin 中的 chunk；如果此时将其的 <code>fd</code> 指向栈，就可以得到一个指向栈地址的指针。</p>
 <p>为了绕过 size 检查，需要设置栈上地址的大小，在这里时 0x20。</p>
 <h2 id="fastbin_dup_consolidatec"><a class="markdownIt-Anchor" href="#fastbin_dup_consolidatec"></a> fastbin_dup_consolidate.c</h2>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;assert.h></span></span>
 
@@ -509,7 +507,7 @@ a double free to gain control of a tcache sized chunk.
         <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
 
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+</code></pre></div></figure>
 <p>通过 <code>malloc_consolidate</code> 与 double-free 组合以得到两个指针指向相同的 large-sized chunk。</p>
 <p><code>malloc_consolidate</code> 将所有 fastbin 中的 chunk 与相邻块合并，放入 unsorted bin 或与 top chunk 合并。</p>
 <p>glibc 2.35 中 <code>malloc_consolidate</code> 在以下五个地方被调用：</p>
@@ -523,7 +521,7 @@ a double free to gain control of a tcache sized chunk.
 <p>想要在 <code>malloc</code> 中触发 <code>malloc_consolidate</code>，我们需要使分配的 chunk 的大小大于等于 0x400，即 large-sized。</p>
 <p>同时，tcache-sized 的最大大小是 0x410，所以我们可以用这种方法来控制一个 tcache-sized chunk。</p>
 <h2 id="unsafe_unlinkc"><a class="markdownIt-Anchor" href="#unsafe_unlinkc"></a> unsafe_unlink.c</h2>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdint.h></span></span>
@@ -585,7 +583,7 @@ a double free to gain control of a tcache sized chunk.
 
         <span class="token comment">// sanity check</span>
         <span class="token function">assert</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token keyword">long</span> <span class="token operator">*</span><span class="token punctuation">)</span>victim_string <span class="token operator">==</span> <span class="token number">0x4141414142424242L</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+<span class="token punctuation">&#125;</span></code></pre></div></figure>
 <p><s>woc这是哪个天才想出来的太尼玛妙了</s></p>
 <p>使用了以下机制：当你 <code>free</code> 一个 chunk 时，如果它相邻的 chunk 是空闲的，系统会把这个 chunk 从双向链表中 <code>unlink</code> 并合并，即：</p>
 <ul>
@@ -603,7 +601,7 @@ a double free to gain control of a tcache sized chunk.
 <p><a target="_blank" rel="noopener" href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=1ecba1fafc160ca70f81211b23f688df8676e612">Unlink</a></p>
 <p><a target="_blank" rel="noopener" href="https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d6db68e66dff25d12c3bc5641b60cbd7fb6ab44f">Check for corrupt prev_size vs size.</a></p>
 <h2 id="house_of_spiritc"><a class="markdownIt-Anchor" href="#house_of_spiritc"></a> house_of_spirit.c</h2>
-<figure><div class="code-wrapper"><pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
 <span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;assert.h></span></span>
 
@@ -651,7 +649,7 @@ a double free to gain control of a tcache sized chunk.
 
         <span class="token function">assert</span><span class="token punctuation">(</span>allocated <span class="token operator">==</span> victim<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></div></figure>
+</code></pre></div></figure>
 <p>通过伪造一个假的 chunk，并使用 <code>free</code> 函数将其释放，从而让这个非堆内的 chunk 进入堆数据结构。 当调用 <code>malloc</code> 时，就会返回这个地址。</p>
 <p>需要绕过的检查：</p>
 <ul>
@@ -741,6 +739,12 @@ a double free to gain control of a tcache sized chunk.
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/p/7fbeb27/" title="NewStar CTF 2025 week5 复读机堂堂归来！复读机堂堂归来！">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">NewStar CTF 2025 week5 复读机堂堂归来！复读机堂堂归来！</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
@@ -948,8 +952,6 @@ a double free to gain control of a tcache sized chunk.
   });
 </script>
 
-
-  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

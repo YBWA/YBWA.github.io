@@ -19,15 +19,15 @@
   <meta name="author" content="yb">
   <meta name="keywords" content="">
   
-    <meta name="description" content="XOR A ^ B ^ B &#x3D; A A ^ B ^ C ^ B &#x3D; A ^ C 原理很简单，没什么好说的。  One-time Pad 实际上就是一个异或加密，但是满足两个就绝对安全：  key 的传输是安全的 只使用一次这个 key  但是不满足这两个就不安全。第一道 key 泄露了，后两道题的 key 重复使用。  AES AES，全称 Advance Encryption Standard">
+    <meta name="description" content="XOR A ^ B ^ B &#x3D; A A ^ B ^ C ^ B &#x3D; A ^ C 原理很简单，没什么好说的。 使用 PyCryptoDome 库进行相关操作。 from Crypto.Util.strxor import strxor strxor(&quot;a&quot;.encode(), &quot;a&quot;.encode()); # b&#39;\x00&#39;&#39;  On">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Pwn College Cryptography 学习笔记">
 <meta property="og:url" content="https://ybwa.github.io/p/2f40ea11/index.html">
 <meta property="og:site_name" content="YB">
-<meta property="og:description" content="XOR A ^ B ^ B &#x3D; A A ^ B ^ C ^ B &#x3D; A ^ C 原理很简单，没什么好说的。  One-time Pad 实际上就是一个异或加密，但是满足两个就绝对安全：  key 的传输是安全的 只使用一次这个 key  但是不满足这两个就不安全。第一道 key 泄露了，后两道题的 key 重复使用。  AES AES，全称 Advance Encryption Standard">
+<meta property="og:description" content="XOR A ^ B ^ B &#x3D; A A ^ B ^ C ^ B &#x3D; A ^ C 原理很简单，没什么好说的。 使用 PyCryptoDome 库进行相关操作。 from Crypto.Util.strxor import strxor strxor(&quot;a&quot;.encode(), &quot;a&quot;.encode()); # b&#39;\x00&#39;&#39;  On">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-03-29T17:19:23.000Z">
-<meta property="article:modified_time" content="2026-04-02T18:04:23.378Z">
+<meta property="article:modified_time" content="2026-04-03T08:14:41.366Z">
 <meta property="article:author" content="yb">
 <meta property="article:tag" content="crypto">
 <meta property="article:tag" content="one time pad">
@@ -70,6 +70,10 @@
     <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
 
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -239,7 +243,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2k 字
+          2.8k 字
         
       </span>
     
@@ -250,7 +254,7 @@
         
         
         
-          18 分钟
+          24 分钟
         
       </span>
     
@@ -296,6 +300,9 @@
 <p><code>A ^ B ^ B = A</code></p>
 <p><code>A ^ B ^ C ^ B = A ^ C</code></p>
 <p>原理很简单，没什么好说的。</p>
+<p>使用 PyCryptoDome 库进行相关操作。</p>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">from Crypto.Util.strxor import strxor
+strxor(&quot;a&quot;.encode(), &quot;a&quot;.encode()); # b&#39;\x00&#39;&#39;</code></pre></div></figure>
 <h2 id="one-time-pad"><a class="markdownIt-Anchor" href="#one-time-pad"></a> One-time Pad</h2>
 <p>实际上就是一个异或加密，但是满足两个就绝对安全：</p>
 <ul>
@@ -465,52 +472,79 @@ S&#x27;_{3} &amp; S&#x27;_{7} &amp; S&#x27;_{11} &amp; S&#x27;_{15}
 </tr>
 </tbody>
 </table>
+<h3 id="分组加密的工作模式"><a class="markdownIt-Anchor" href="#分组加密的工作模式"></a> 分组加密的工作模式</h3>
+<p>到现在只解决了单组的加密问题，对于其他内容有更多的处理方法。</p>
+<h4 id="ecb"><a class="markdownIt-Anchor" href="#ecb"></a> ECB</h4>
+<p>即 Electronic Code Book，将明文直接分割，分别 AES 后拼接。</p>
+<h4 id="pkcs7"><a class="markdownIt-Anchor" href="#pkcs7"></a> PKCS7</h4>
+<p>处理 padding 的标准，若最后一组只有 13 Bytes，明文最后三字节填为 <code>0x03 0x03 0x03</code>。</p>
+<p>但是万一明文刚好整分组，且最后一字节是 <code>0x01</code> 怎么办？那就多开一个 <code>0x10</code> 组成的分组。</p>
+<h4 id="cbc"><a class="markdownIt-Anchor" href="#cbc"></a> CBC</h4>
+<p>CBC 即 Cipher Block Chaining，ECB 的缺点是每一个分组之间相对没有影响，比如有一张较大的图片，加密后的密文排列依旧可以看出形状。CBC 解决了这个问题，使得分组之间产生联系。</p>
+<p>具体来说，每个块加密前，异或上上一个块的密文。第一个则异或上随机串 Initialization Vector(IV)，这个随机串随后会附在密文开头。解密即所有块解密后异或上一块的密文。因为 IV 每次都是是随机的，这也使得 CPA 失效。</p>
+<p>此外，CBC 异或前一块的密文而不是明文的好处还在于：</p>
+<ul>
+<li>若明文有一大串 0，可能会泄露数据</li>
+<li>可以从任意一个位置开始解密。若异或的是明文则需要递归依赖到开头</li>
+</ul>
+<p>缺点就是加密无法并行，效率低了不少。</p>
 <h3 id="pwn-college-题"><a class="markdownIt-Anchor" href="#pwn-college-题"></a> Pwn College 题</h3>
-<p>使用 PyCryptoDome 库可以完成一些密码相关的操作。</p>
+<h4 id="aes-2"><a class="markdownIt-Anchor" href="#aes-2"></a> AES</h4>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">from Crypto.Cipher import AES
+
+key&#x3D;bytes.fromhex(&quot;5b710801526c8550a8e406d8e3419aeb&quot;)
+ciphertext &#x3D; bytes.fromhex(&quot;1b6bf22abced36d03eb5c2111e8fecc0622b022d80140dae8e7e50349adf3ce3b0b10223078e10a7cbf6fc4b21f60c1d5b21d59aa5bdcdef21a3aa01d82991b7&quot;)
+
+cipher &#x3D; AES.new(key,AES.MODE_ECB)
+plaintext &#x3D; cipher.decrpt(ciphertext)
+
+# &gt;&gt;&gt; plaintext
+# b&#39;pwn.college&#123;wQqefBC_RvNWsUVh9tyuqiTjd09.QX2czMzwCOzADOzEzW&#125;\n\x04\x04\x04\x04&#39;
+</code></pre></div></figure>
 <h4 id="aes-ecb-cpa"><a class="markdownIt-Anchor" href="#aes-ecb-cpa"></a> AES-ECB-CPA</h4>
 <p>CPA 即 Chosen Plaintext Attack，这里可以选择以任意 index 开始长度 length 来 AES 加密。提前打表一份每个字符即可。</p>
-<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">from pwn import *
 
-p <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token string">"/challenge/run"</span><span class="token punctuation">)</span>
-p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"? "</span><span class="token punctuation">)</span>
+p &#x3D; process(&quot;&#x2F;challenge&#x2F;run&quot;)
+p.recvuntil(&quot;? &quot;)
 
-<span class="token builtin">list</span> <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
-<span class="token keyword">def</span> <span class="token function">restor</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">"1"</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"? "</span><span class="token punctuation">)</span>
-    p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span>c<span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    <span class="token builtin">list</span><span class="token punctuation">[</span>c<span class="token punctuation">]</span> <span class="token operator">=</span> p<span class="token punctuation">.</span>recvline<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"? "</span><span class="token punctuation">)</span>
+list &#x3D; &#123;&#125;
+def restor(c):
+    p.sendline(&quot;1&quot;.encode())
+    p.recvuntil(&quot;? &quot;)
+    p.sendline(c.encode())
+    list[c] &#x3D; p.recvline()
+    p.recvuntil(&quot;? &quot;)
 
-restor<span class="token punctuation">(</span><span class="token string">"-"</span><span class="token punctuation">)</span>
-restor<span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">)</span>
-restor<span class="token punctuation">(</span><span class="token string">"&#123;"</span><span class="token punctuation">)</span>
-restor<span class="token punctuation">(</span><span class="token string">"&#125;"</span><span class="token punctuation">)</span>
-restor<span class="token punctuation">(</span><span class="token string">"_"</span><span class="token punctuation">)</span>
-<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">26</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    restor<span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">)</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">)</span>
-    restor<span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span><span class="token string">"A"</span><span class="token punctuation">)</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">)</span>
-    <span class="token keyword">if</span> i <span class="token operator">&lt;</span> <span class="token number">10</span><span class="token punctuation">:</span>
-        restor<span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span><span class="token string">"0"</span><span class="token punctuation">)</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">)</span>
+restor(&quot;-&quot;)
+restor(&quot;.&quot;)
+restor(&quot;&#123;&quot;)
+restor(&quot;&#125;&quot;)
+restor(&quot;_&quot;)
+for i in range(26):
+    restor(chr(ord(&quot;a&quot;) + i))
+    restor(chr(ord(&quot;A&quot;) + i))
+    if i &lt; 10:
+        restor(chr(ord(&quot;0&quot;) + i))
 
 
-flag <span class="token operator">=</span> <span class="token string">"p"</span>
-i <span class="token operator">=</span> <span class="token number">0</span>
-<span class="token keyword">while</span> flag<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">!=</span> <span class="token string">"&#125;"</span><span class="token punctuation">:</span>
-    i <span class="token operator">=</span> i <span class="token operator">+</span> <span class="token number">1</span>
-    <span class="token keyword">for</span> c<span class="token punctuation">,</span> cip <span class="token keyword">in</span> <span class="token builtin">list</span><span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-        p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">"2"</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-        p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"? "</span><span class="token punctuation">)</span>
-        p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-        p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"? "</span><span class="token punctuation">)</span>
-        p<span class="token punctuation">.</span>sendline<span class="token punctuation">(</span><span class="token string">"1"</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-        rr <span class="token operator">=</span> p<span class="token punctuation">.</span>recvline<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        p<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">"? "</span><span class="token punctuation">)</span>
-        <span class="token keyword">if</span> rr <span class="token operator">==</span> cip<span class="token punctuation">:</span>
-            flag <span class="token operator">+=</span> c
-            <span class="token keyword">break</span>
+flag &#x3D; &quot;p&quot;
+i &#x3D; 0
+while flag[-1] !&#x3D; &quot;&#125;&quot;:
+    i &#x3D; i + 1
+    for c, cip in list.items():
+        p.sendline(&quot;2&quot;.encode())
+        p.recvuntil(&quot;? &quot;)
+        p.sendline(str(i).encode())
+        p.recvuntil(&quot;? &quot;)
+        p.sendline(&quot;1&quot;.encode())
+        rr &#x3D; p.recvline();
+        p.recvuntil(&quot;? &quot;)
+        if rr &#x3D;&#x3D; cip:
+            flag +&#x3D; c
+            break
 
-<span class="token keyword">print</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span></code></pre></div></figure>
+print(flag)</code></pre></div></figure>
 <h4 id="aes-ecb-cpa-suffix"><a class="markdownIt-Anchor" href="#aes-ecb-cpa-suffix"></a> AES-ECB-CPA-Suffix</h4>
 <figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">hacker@cryptography~aes-ecb-cpa-suffix:~$ &#x2F;challenge&#x2F;run 
 Choose an action?
@@ -567,13 +601,85 @@ Ciphertext: b46d128fbc5f9a0f7596b9a33a14037ac1ee223ca720ede0ca85ec20944bc2ddf28f
 Data?
 </code></pre></div></figure>
 <p>使用十六进制输入。没多大差别吧）</p>
-<h3 id="分组加密的工作模式"><a class="markdownIt-Anchor" href="#分组加密的工作模式"></a> 分组加密的工作模式</h3>
-<p>到现在只解决了单组的加密问题，对于其他内容有更多的处理方法。</p>
-<h3 id="ecb"><a class="markdownIt-Anchor" href="#ecb"></a> ECB</h3>
-<p>即 Electronic Code Book，将明文直接分割，分别 AES 后拼接。</p>
-<h4 id="pkcs7"><a class="markdownIt-Anchor" href="#pkcs7"></a> PKCS7</h4>
-<p>处理 padding 的标准，若最后一组只有 13 Bytes，明文最后三字节填为 <code>0x03 0x03 0x03</code>。</p>
-<p>但是万一明文刚好整分组，且最后一字节是 <code>0x01</code> 怎么办？那就多开一个 <code>0x10</code> 组成的分组。</p>
+<h4 id="aes-cbc"><a class="markdownIt-Anchor" href="#aes-cbc"></a> AES-CBC</h4>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">from Crypto.Cipher import AES
+
+key &#x3D; bytes.fromhex(&quot;86f4204528b4c2cb1c83bce25e8b23dc&quot;)
+ciphertext &#x3D; bytes.fromhex(&quot;57cc6e947bc2f27efaab5f36a5df10903feb343928c55527ec16236c2cc021ddb9064df0baa6297b0fc6de1ee3bb3b522737c85c465dc585c639d852fb1713691671458da4e332e4271b42bdbea7edaa&quot;)
+
+cipher &#x3D; AES.new(key, AES.MODE_CBC)
+plaintext &#x3D; cipher.decrypt(ciphertext)
+
+print(plaintext)</code></pre></div></figure>
+<h4 id="aes-cbc-tampering"><a class="markdownIt-Anchor" href="#aes-cbc-tampering"></a> AES-CBC Tampering</h4>
+<p>通过中间劫持密文并针对 IV 修改达到修改明文的手段。</p>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">hacker@cryptography~aes-cbc-tampering:~$ cat &#x2F;challenge&#x2F;dispatcher 
+#!&#x2F;usr&#x2F;bin&#x2F;exec-suid -- &#x2F;usr&#x2F;bin&#x2F;python3 -I
+
+import os
+
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+from Crypto.Random import get_random_bytes
+
+key &#x3D; open(&quot;&#x2F;challenge&#x2F;.key&quot;, &quot;rb&quot;).read()
+cipher &#x3D; AES.new(key&#x3D;key, mode&#x3D;AES.MODE_CBC)
+ciphertext &#x3D; cipher.iv + cipher.encrypt(pad(b&quot;sleep&quot;, cipher.block_size))
+
+print(f&quot;TASK: &#123;ciphertext.hex()&#125;&quot;)</code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">hacker@cryptography~aes-cbc-tampering:~$ cat &#x2F;challenge&#x2F;worker 
+#!&#x2F;usr&#x2F;bin&#x2F;exec-suid -- &#x2F;usr&#x2F;bin&#x2F;python3 -I
+
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad
+from Crypto.Random import get_random_bytes
+
+import time
+import sys
+
+key &#x3D; open(&quot;&#x2F;challenge&#x2F;.key&quot;, &quot;rb&quot;).read()
+
+while line :&#x3D; sys.stdin.readline():
+    if not line.startswith(&quot;TASK: &quot;):
+        continue
+    data &#x3D; bytes.fromhex(line.split()[1])
+    iv, ciphertext &#x3D; data[:16], data[16:]
+
+    cipher &#x3D; AES.new(key&#x3D;key, mode&#x3D;AES.MODE_CBC, iv&#x3D;iv)
+    try:
+        plaintext &#x3D; unpad(cipher.decrypt(ciphertext), cipher.block_size).decode(&#39;latin1&#39;)
+    except ValueError as e:
+        print(&quot;Error:&quot;, e)
+        continue
+
+    print(f&quot;Hex of plaintext: &#123;plaintext.encode(&#39;latin1&#39;).hex()&#125;&quot;)
+    print(f&quot;Received command: &#123;plaintext&#125;&quot;)
+    if plaintext &#x3D;&#x3D; &quot;sleep&quot;:
+        print(&quot;Sleeping!&quot;)
+        time.sleep(1)
+    elif plaintext &#x3D;&#x3D; &quot;flag!&quot;:
+        print(&quot;Victory! Your flag:&quot;)
+        print(open(&quot;&#x2F;flag&quot;).read())
+    else:
+        print(&quot;Unknown command!&quot;)</code></pre></div></figure>
+<p>因为这里知道明文是 <code>sleep</code>，目标是 <code>flag!</code>，而且是第一个块，直接将 IV 替换为 <code>IV ^ b'sleep' ^ b'flag!'</code> 即可。</p>
+<p><s>妙啊！</s></p>
+<p><code>strxor</code> 不支持长度不相同的异或。这里需要用到 Padding 来填充。</p>
+<figure><div class="code-wrapper"><pre class="language-python" data-language="python"><code class="language-python">from Crypto.Util.Padding import pad
+from Crypto.Cipher import AES
+from Crypto.Util.strxor import strxor
+
+task &#x3D; &quot;0fabaa552f79ee1c3a5b0620108e1256a32e8bb84b023732cc75b8371c9a026c&quot;
+task &#x3D; bytes.fromhex(task)
+
+iv, ci &#x3D; task[:16], task[16:]
+sleep &#x3D; pad(b&quot;sleep&quot;, AES.block_size)
+flag_ &#x3D; pad(b&quot;flag!&quot;, AES.block_size)
+
+print(&quot;TASK: &quot; + strxor(iv, strxor(sleep, flag_)).hex() + ci.hex())
+</code></pre></div></figure>
+<h4 id="aes-cbc-resizing"><a class="markdownIt-Anchor" href="#aes-cbc-resizing"></a> AES-CBC Resizing</h4>
+<p>前面 <code>sleep</code> 和 <code>flag!</code> 长度相同，这里不同。但是我已经用 padding 了就没有问题了。</p>
 
                 
               </div>
@@ -865,6 +971,10 @@ Data?
   });
 </script>
 
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

@@ -71,6 +71,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -238,7 +242,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          701 字
+          760 字
         
       </span>
     
@@ -249,7 +253,7 @@
         
         
         
-          6 分钟
+          7 分钟
         
       </span>
     
@@ -335,64 +339,64 @@
 <h2 id="n-2-2"><a class="markdownIt-Anchor" href="#n-2-2"></a> n &gt; 2</h2>
 <p>$ n = 2 $ 时的做法相当于合并了两个同余方程，所以我们只要按照这个做法一直合并合并知道只剩最后一个方程为止。</p>
 <h2 id="code"><a class="markdownIt-Anchor" href="#code"></a> CODE</h2>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;bits/stdc++.h></span></span>
-<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;bits&#x2F;stdc++.h&gt;
+using namespace std;
 
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">int</span> <span class="token expression"><span class="token keyword">long</span> <span class="token keyword">long</span></span></span>
+#define int long long
 
-<span class="token keyword">inline</span> <span class="token keyword">int</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> f <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token keyword">char</span> c <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">isdigit</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">)</span> f <span class="token operator">|=</span> c <span class="token operator">==</span> <span class="token char">'-'</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token function">getchar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">isdigit</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">)</span> x <span class="token operator">=</span> <span class="token punctuation">(</span>x <span class="token operator">&lt;&lt;</span> <span class="token number">3</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>x <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>c <span class="token operator">^</span> <span class="token number">48</span><span class="token punctuation">)</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token function">getchar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> f <span class="token operator">?</span> <span class="token operator">-</span>x <span class="token operator">:</span> x<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+inline int read() &#123;
+	int x &#x3D; 0, f &#x3D; 0; char c &#x3D; 0;
+	while (!isdigit(c)) f |&#x3D; c &#x3D;&#x3D; &#39;-&#39;, c &#x3D; getchar();
+	while (isdigit(c)) x &#x3D; (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c ^ 48), c &#x3D; getchar();
+	return f ? -x : x;
+&#125;
 
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">N</span> <span class="token expression"><span class="token number">100010</span></span></span>
+#define N 100010
 
-<span class="token keyword">int</span> n<span class="token punctuation">,</span> a<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> b<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> P<span class="token punctuation">;</span>
+int n, a[N], b[N], P;
 
-<span class="token keyword">int</span> <span class="token function">Mul</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> k<span class="token punctuation">,</span> <span class="token keyword">int</span> r <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token punctuation">;</span> k<span class="token punctuation">;</span> k <span class="token operator">>>=</span> <span class="token number">1</span><span class="token punctuation">,</span> x <span class="token operator">=</span> <span class="token punctuation">(</span>x <span class="token operator">+</span> x<span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-		<span class="token keyword">if</span> <span class="token punctuation">(</span>k <span class="token operator">&amp;</span> <span class="token number">1</span><span class="token punctuation">)</span> r <span class="token operator">=</span> <span class="token punctuation">(</span>r <span class="token operator">+</span> x<span class="token punctuation">)</span> <span class="token operator">%</span> P<span class="token punctuation">;</span>
-	<span class="token punctuation">&#125;</span>
-	<span class="token keyword">return</span> r<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+int Mul(int x, int k, int r &#x3D; 0) &#123;
+	for (; k; k &gt;&gt;&#x3D; 1, x &#x3D; (x + x) % P) &#123;
+		if (k &amp; 1) r &#x3D; (r + x) % P;
+	&#125;
+	return r;
+&#125;
 
-<span class="token keyword">int</span> <span class="token function">gcd</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">,</span> <span class="token keyword">int</span> b<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">return</span> <span class="token operator">!</span>b <span class="token operator">?</span> a <span class="token operator">:</span> <span class="token function">gcd</span><span class="token punctuation">(</span>b<span class="token punctuation">,</span> a <span class="token operator">%</span> b<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+int gcd(int a, int b) &#123;
+	return !b ? a : gcd(b, a % b);
+&#125;
 
-<span class="token keyword">void</span> <span class="token function">exgcd</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">,</span> <span class="token keyword">int</span> b<span class="token punctuation">,</span> <span class="token keyword">int</span> <span class="token operator">&amp;</span>x<span class="token punctuation">,</span> <span class="token keyword">int</span> <span class="token operator">&amp;</span>y<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">if</span> <span class="token punctuation">(</span>b <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>x <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> y <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token keyword">return</span><span class="token punctuation">;</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-	<span class="token function">exgcd</span><span class="token punctuation">(</span>b<span class="token punctuation">,</span> a <span class="token operator">%</span> b<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token keyword">int</span> t <span class="token operator">=</span> y<span class="token punctuation">;</span>
-	y <span class="token operator">=</span> x <span class="token operator">-</span> <span class="token punctuation">(</span>a <span class="token operator">/</span> b<span class="token punctuation">)</span> <span class="token operator">*</span> y<span class="token punctuation">,</span> x <span class="token operator">=</span> t<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+void exgcd(int a, int b, int &amp;x, int &amp;y) &#123;
+	if (b &#x3D;&#x3D; 0) &#123;x &#x3D; 1, y &#x3D; 0; return;&#125;;
+	exgcd(b, a % b, x, y); int t &#x3D; y;
+	y &#x3D; x - (a &#x2F; b) * y, x &#x3D; t;
+&#125;
 
-<span class="token keyword">int</span> <span class="token function">excrt</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">int</span> A <span class="token operator">=</span> a<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> B <span class="token operator">=</span> b<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> k<span class="token punctuation">,</span> y<span class="token punctuation">;</span>
-    <span class="token comment">// A : a1, B : b1, k : k1</span>
-	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token comment">// a[i] : a2, b[i] : b2</span>
-		<span class="token keyword">int</span> d <span class="token operator">=</span> <span class="token function">gcd</span><span class="token punctuation">(</span>B<span class="token punctuation">,</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> t <span class="token operator">=</span> <span class="token punctuation">(</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> A <span class="token operator">%</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">%</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
-        <span class="token comment">// t : a2 - a1, 在模 b2 意义下</span>
-		<span class="token function">exgcd</span><span class="token punctuation">(</span>B<span class="token punctuation">,</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> k<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
-		<span class="token keyword">if</span> <span class="token punctuation">(</span>t <span class="token operator">%</span> d<span class="token punctuation">)</span> <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
-		P <span class="token operator">=</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">/</span> d<span class="token punctuation">;</span>
-		A <span class="token operator">+=</span> <span class="token function">Mul</span><span class="token punctuation">(</span>k<span class="token punctuation">,</span> t <span class="token operator">/</span> d<span class="token punctuation">)</span> <span class="token operator">*</span> B<span class="token punctuation">;</span> <span class="token comment">// a = k1b1 + a1</span>
-		B <span class="token operator">=</span> B <span class="token operator">/</span> d <span class="token operator">*</span> b<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// b = lcm(b1, b2)</span>
-		A <span class="token operator">=</span> <span class="token punctuation">(</span>A <span class="token operator">+</span> B<span class="token punctuation">)</span> <span class="token operator">%</span> B<span class="token punctuation">;</span>
-	<span class="token punctuation">&#125;</span>
-	<span class="token keyword">return</span> A<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
+int excrt() &#123;
+	int A &#x3D; a[1], B &#x3D; b[1], k, y;
+    &#x2F;&#x2F; A : a1, B : b1, k : k1
+	for (int i &#x3D; 2; i &lt;&#x3D; n; i ++) &#123;
+        &#x2F;&#x2F; a[i] : a2, b[i] : b2
+		int d &#x3D; gcd(B, b[i]), t &#x3D; (a[i] - A % b[i] + b[i]) % b[i];
+        &#x2F;&#x2F; t : a2 - a1, 在模 b2 意义下
+		exgcd(B, b[i], k, y);
+		if (t % d) return -1;
+		P &#x3D; b[i] &#x2F; d;
+		A +&#x3D; Mul(k, t &#x2F; d) * B; &#x2F;&#x2F; a &#x3D; k1b1 + a1
+		B &#x3D; B &#x2F; d * b[i]; &#x2F;&#x2F; b &#x3D; lcm(b1, b2)
+		A &#x3D; (A + B) % B;
+	&#125;
+	return A;
+&#125;
 
-<span class="token keyword">signed</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	n <span class="token operator">=</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-		b<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> a<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token punctuation">&#125;</span>
-	<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%lld\n"</span><span class="token punctuation">,</span> <span class="token function">excrt</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre></div></figure>
+signed main() &#123;
+	n &#x3D; read();
+	for (int i &#x3D; 1; i &lt;&#x3D; n; i ++) &#123;
+		b[i] &#x3D; read(), a[i] &#x3D; read();
+	&#125;
+	printf(&quot;%lld\n&quot;, excrt());
+	return 0;
+&#125;</code></pre></div></figure>
 
                 
               </div>
@@ -709,6 +713,10 @@
   });
 </script>
 
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

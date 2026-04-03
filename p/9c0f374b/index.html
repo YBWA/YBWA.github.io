@@ -19,12 +19,12 @@
   <meta name="author" content="yb">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Some C++ Tricks from Codeforces Here, In folder C++. I choose some of them which is useful for me and note them in these blog.  all(x) #define all(x) x.begin(), x.end before: vector&lt;int&gt; a; &#x2F;&#x2F; som">
+    <meta name="description" content="Some C++ Tricks from Codeforces Here, In folder C++. I choose some of them which is useful for me and note them in these blog.  all(x) #define all(x) x.begin(), x.end before: vector&lt;int&gt; a; &amp;#x">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Some C++ Tricks from Codeforces">
 <meta property="og:url" content="https://ybwa.github.io/p/9c0f374b/index.html">
 <meta property="og:site_name" content="YB">
-<meta property="og:description" content="Some C++ Tricks from Codeforces Here, In folder C++. I choose some of them which is useful for me and note them in these blog.  all(x) #define all(x) x.begin(), x.end before: vector&lt;int&gt; a; &#x2F;&#x2F; som">
+<meta property="og:description" content="Some C++ Tricks from Codeforces Here, In folder C++. I choose some of them which is useful for me and note them in these blog.  all(x) #define all(x) x.begin(), x.end before: vector&lt;int&gt; a; &amp;#x">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-16T13:01:49.000Z">
 <meta property="article:modified_time" content="2025-12-30T12:37:07.000Z">
@@ -68,6 +68,10 @@
     <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
 
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
 
 
 
@@ -237,7 +241,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          321 字
+          372 字
         
       </span>
     
@@ -248,7 +252,7 @@
         
         
         
-          3 分钟
+          4 分钟
         
       </span>
     
@@ -294,71 +298,71 @@
 <p><a target="_blank" rel="noopener" href="https://codeforces.com/catalog">Here</a>, In folder C++.</p>
 <p>I choose some of them which is useful for me and note them in these blog.</p>
 <h3 id="allx"><a class="markdownIt-Anchor" href="#allx"></a> all(x)</h3>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name function">all</span><span class="token expression"><span class="token punctuation">(</span>x<span class="token punctuation">)</span> x<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> x<span class="token punctuation">.</span>end</span></span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#define all(x) x.begin(), x.end</code></pre></div></figure>
 <p>before:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> a<span class="token punctuation">;</span>
-<span class="token comment">// some operation...</span>
-<span class="token function">sort</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> a<span class="token punctuation">.</span><span class="token function">end</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector&lt;int&gt; a;
+&#x2F;&#x2F; some operation...
+sort(a.begin(), a.end());</code></pre></div></figure>
 <p>now:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> a<span class="token punctuation">;</span>
-<span class="token comment">// some operation...</span>
-<span class="token function">sort</span><span class="token punctuation">(</span><span class="token function">all</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector&lt;int&gt; a;
+&#x2F;&#x2F; some operation...
+sort(all(a));</code></pre></div></figure>
 <p>before:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> a<span class="token punctuation">;</span>
-<span class="token comment">// some operation...</span>
-<span class="token function">sort</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> a<span class="token punctuation">.</span><span class="token function">end</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector&lt;int&gt; a;
+&#x2F;&#x2F; some operation...
+sort(a.begin() + 1, a.end())</code></pre></div></figure>
 <p>now:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> a<span class="token punctuation">;</span>
-<span class="token comment">// some operation...</span>
-<span class="token function">sort</span><span class="token punctuation">(</span><span class="token number">1</span> <span class="token operator">+</span> <span class="token function">all</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">vector&lt;int&gt; a;
+&#x2F;&#x2F; some operation...
+sort(1 + all(x));</code></pre></div></figure>
 <h3 id="stdunique"><a class="markdownIt-Anchor" href="#stdunique"></a> std::unique</h3>
 <p>We know that <code>std::unique</code> won’t delete the rest number, but put them in the end.For example, <code>vec = {1, 1, 2, 2, 3, 2, 1}</code> may become <code>{1, 2, 3, 2, 1, 2, 1}</code>. It not good.We can do like this:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">sort</span><span class="token punctuation">(</span><span class="token function">all</span><span class="token punctuation">(</span>vec<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-vec<span class="token punctuation">.</span><span class="token function">resize</span><span class="token punctuation">(</span><span class="token function">unique</span><span class="token punctuation">(</span><span class="token function">all</span><span class="token punctuation">(</span>vec<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">-</span> vec<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">sort(all(vec));
+vec.resize(unique(all(vec)) - vec.begin());</code></pre></div></figure>
 <h3 id="read"><a class="markdownIt-Anchor" href="#read"></a> read()</h3>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">inline</span> <span class="token keyword">int</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-	<span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> f <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token keyword">char</span> c <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">isdigit</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">)</span> f <span class="token operator">|=</span> c <span class="token operator">==</span> <span class="token char">'-'</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token function">getchar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">isdigit</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">)</span> x <span class="token operator">=</span> <span class="token punctuation">(</span>x <span class="token operator">&lt;&lt;</span> <span class="token number">3</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>x <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>c <span class="token operator">&amp;</span> <span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token function">getchar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-	<span class="token keyword">return</span> f <span class="token operator">?</span> <span class="token operator">-</span>x <span class="token operator">:</span> x<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">inline int read() &#123;
+	int x &#x3D; 0, f &#x3D; 0; char c &#x3D; 0;
+	while (!isdigit(c)) f |&#x3D; c &#x3D;&#x3D; &#39;-&#39;, c &#x3D; getchar();
+	while (isdigit(c)) x &#x3D; (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c &amp; 15), c &#x3D; getchar();
+	return f ? -x : x;
+&#125;</code></pre></div></figure>
 <p>Faster and Shorter.</p>
 <p>before:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> n<span class="token punctuation">;</span>
-cin <span class="token operator">>></span> n<span class="token punctuation">;</span> <span class="token comment">// or scanf("%d", &amp;n);</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">int n;
+cin &gt;&gt; n; &#x2F;&#x2F; or scanf(&quot;%d&quot;, &amp;n);</code></pre></div></figure>
 <p>now:</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> n <span class="token operator">=</span> <span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">int n &#x3D; read();</code></pre></div></figure>
 <hr />
 <p>我为什么要用阴文。。。写不下去了。。。</p>
 <hr />
 <h3 id="stdgenerate"><a class="markdownIt-Anchor" href="#stdgenerate"></a> std::generate</h3>
 <p>将给定的区间用给定的函数赋值。举个例子：</p>
 <figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">
-<span class="token keyword">int</span> x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token keyword">int</span> <span class="token function">up</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token keyword">return</span> <span class="token operator">++</span> x<span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+int x &#x3D; 0;
+int up() &#123; return ++ x; &#125;
 
-vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> <span class="token function">a</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token function">generate</span><span class="token punctuation">(</span><span class="token function">all</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">,</span> up<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">// a = &#123;1, 2, 3, 4&#125;</span>
+vector&lt;int&gt; a(4);
+generate(all(a), up);
+&#x2F;&#x2F; a &#x3D; &#123;1, 2, 3, 4&#125;
 </code></pre></div></figure>
 <p>配合 <code>read</code> 可以快速读入数组。</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span> cin <span class="token operator">>></span> a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">for (int i &#x3D; 1; i &lt;&#x3D; n; i ++) cin &gt;&gt; a[i];</code></pre></div></figure>
 <p>现在变成了</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">generate</span><span class="token punctuation">(</span>a <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> a <span class="token operator">+</span> n <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> read<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">generate(a + 1, a + n + 1, read);</code></pre></div></figure>
 <p>使用 <code>generate_n</code> 还可以写成：</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token function">generate_n</span><span class="token punctuation">(</span>a <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> n<span class="token punctuation">,</span> read<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">generate_n(a + 1, n, read);</code></pre></div></figure>
 <h3 id="输出一个数的二进制"><a class="markdownIt-Anchor" href="#输出一个数的二进制"></a> 输出一个数的二进制</h3>
 <p>使用 <code>std::bitset</code> 可以这样：</p>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> n<span class="token punctuation">;</span>
-<span class="token comment">// ...</span>
-cout <span class="token operator">&lt;&lt;</span> <span class="token generic-function"><span class="token function">bitset</span><span class="token generic class-name"><span class="token operator">&lt;</span><span class="token number">31</span><span class="token operator">></span></span></span><span class="token punctuation">(</span>n<span class="token punctuation">)</span> <span class="token operator">&lt;&lt;</span> endl<span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">int n;
+&#x2F;&#x2F; ...
+cout &lt;&lt; bitset&lt;31&gt;(n) &lt;&lt; endl;</code></pre></div></figure>
 <h3 id="lambda-表达式"><a class="markdownIt-Anchor" href="#lambda-表达式"></a> lambda 表达式</h3>
 <p>见我的另一篇 blog。</p>
 <h3 id="stdmax"><a class="markdownIt-Anchor" href="#stdmax"></a> std::max</h3>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token keyword">int</span> r <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> c<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">int r &#x3D; max(&#123;a, b, c&#125;);</code></pre></div></figure>
 <h3 id=""><a class="markdownIt-Anchor" href="#"></a> {}</h3>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">pair<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token punctuation">,</span> <span class="token keyword">int</span><span class="token operator">></span> x <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">&#125;</span> <span class="token comment">// 等价于 make_pair(1, 2)</span>
-vector<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> y <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">&#125;</span> <span class="token comment">// 对 vector 直接赋值</span></code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">pair&lt;int, int&gt; x &#x3D; &#123;1, 2&#125; &#x2F;&#x2F; 等价于 make_pair(1, 2)
+vector&lt;int&gt; y &#x3D; &#123;1, 1, 4, 5, 1, 4&#125; &#x2F;&#x2F; 对 vector 直接赋值</code></pre></div></figure>
 <ul>
 <li>好像没了</li>
 </ul>
@@ -653,6 +657,10 @@ vector<span class="token operator">&lt;</span><span class="token keyword">int</s
   });
 </script>
 
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

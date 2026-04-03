@@ -81,6 +81,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -360,44 +364,44 @@ X_j = C_j
 <p>然后你就会发现双端队列可以很好地满足我们维护凸壳的需求。</p>
 <p>这样就可以做到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Θ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">Θ</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> 了。斜率优化的大致思想就是这样吧。</p>
 <h3 id="code"><a class="markdownIt-Anchor" href="#code"></a> CODE</h3>
-<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;bits/stdc++.h></span></span>
-<span class="token keyword">using</span> <span class="token keyword">namespace</span> std<span class="token punctuation">;</span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">N</span> <span class="token expression"><span class="token number">300010</span></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">eps</span> <span class="token expression"><span class="token number">1e-6</span></span></span>
-<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">define</span> <span class="token macro-name">int</span> <span class="token expression"><span class="token keyword">long</span> <span class="token keyword">long</span></span></span>
+<figure><div class="code-wrapper"><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;bits&#x2F;stdc++.h&gt;
+using namespace std;
+#define N 300010
+#define eps 1e-6
+#define int long long
 
-<span class="token keyword">int</span> n<span class="token punctuation">,</span> S<span class="token punctuation">,</span> c<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> t<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> q<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">,</span> l<span class="token punctuation">,</span> r<span class="token punctuation">,</span> f<span class="token punctuation">[</span>N<span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token comment">// q 就是维护凸壳的队列</span>
+int n, S, c[N], t[N], q[N], l, r, f[N];
+&#x2F;&#x2F; q 就是维护凸壳的队列
 
-<span class="token keyword">signed</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">,</span> <span class="token operator">&amp;</span>S<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> tt<span class="token punctuation">,</span> cc<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%lld%lld"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>tt<span class="token punctuation">,</span> <span class="token operator">&amp;</span>cc<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        c<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> c<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> cc<span class="token punctuation">;</span> <span class="token comment">// 前缀和</span>
-        t<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> t<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> tt<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token function">memset</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token number">0x3f</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span> f<span class="token punctuation">)</span><span class="token punctuation">,</span> f<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> l <span class="token operator">=</span> r <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> q<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">while</span> <span class="token punctuation">(</span>l <span class="token operator">&lt;</span> r<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// 将斜率大于当前值的删去</span>
-            <span class="token keyword">double</span> k <span class="token operator">=</span> <span class="token number">1.0</span> <span class="token operator">*</span> <span class="token punctuation">(</span>f<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">-</span> f<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">-</span> c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token comment">/*注意这里以及下面都使用了 double 存储斜率来方便理解，
-            一般要将除法运算转换成乘法来提高精度，但这样也是可以 A 的 Qwq*/</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>k <span class="token operator">-</span> <span class="token punctuation">(</span>t<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> S<span class="token punctuation">)</span> <span class="token operator">></span> eps<span class="token punctuation">)</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
-            l <span class="token operator">++</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        f<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> f<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">+</span> t<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">*</span> <span class="token punctuation">(</span>c<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>c<span class="token punctuation">[</span>n<span class="token punctuation">]</span> <span class="token operator">-</span> c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>l<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">*</span> S<span class="token punctuation">;</span> <span class="token comment">// 转移</span>
-        <span class="token keyword">while</span> <span class="token punctuation">(</span>l <span class="token operator">&lt;</span> r<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// 维护凸壳</span>
-            <span class="token keyword">double</span> k1 <span class="token operator">=</span> <span class="token number">1.0</span> <span class="token operator">*</span> <span class="token punctuation">(</span>f<span class="token punctuation">[</span>q<span class="token punctuation">[</span>r<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">-</span> f<span class="token punctuation">[</span>q<span class="token punctuation">[</span>r <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>r<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">-</span> c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>r <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">double</span> k2 <span class="token operator">=</span> <span class="token number">1.0</span> <span class="token operator">*</span> <span class="token punctuation">(</span>f<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> f<span class="token punctuation">[</span>q<span class="token punctuation">[</span>r<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token punctuation">(</span>c<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> c<span class="token punctuation">[</span>q<span class="token punctuation">[</span>r<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>k2 <span class="token operator">-</span> k1 <span class="token operator">></span> eps<span class="token punctuation">)</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
-            r <span class="token operator">--</span><span class="token punctuation">;</span>
-        <span class="token punctuation">&#125;</span>
-        q<span class="token punctuation">[</span><span class="token operator">++</span> r<span class="token punctuation">]</span> <span class="token operator">=</span> i<span class="token punctuation">;</span> <span class="token comment">// 插入新点</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%lld\n"</span><span class="token punctuation">,</span> f<span class="token punctuation">[</span>n<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token comment">/* 完结撒花！ */</span></code></pre></div></figure>
+signed main() &#123;
+    scanf(&quot;%lld%lld&quot;, &amp;n, &amp;S);
+    for (int i &#x3D; 1, tt, cc; i &lt;&#x3D; n; i ++) &#123;
+        scanf(&quot;%lld%lld&quot;, &amp;tt, &amp;cc);
+        c[i] &#x3D; c[i - 1] + cc; &#x2F;&#x2F; 前缀和
+        t[i] &#x3D; t[i - 1] + tt;
+    &#125;
+    memset(f, 0x3f, sizeof f), f[0] &#x3D; 0, l &#x3D; r &#x3D; 1, q[1] &#x3D; 0;
+    for (int i &#x3D; 1; i &lt;&#x3D; n; i ++) &#123;
+        while (l &lt; r) &#123; &#x2F;&#x2F; 将斜率大于当前值的删去
+            double k &#x3D; 1.0 * (f[q[l]] - f[q[l + 1]]) &#x2F; (c[q[l]] - c[q[l + 1]]);
+            &#x2F;*注意这里以及下面都使用了 double 存储斜率来方便理解，
+            一般要将除法运算转换成乘法来提高精度，但这样也是可以 A 的 Qwq*&#x2F;
+            if (k - (t[i] + S) &gt; eps) break;
+            l ++;
+        &#125;
+        f[i] &#x3D; f[q[l]] + t[i] * (c[i] - c[q[l]]) + (c[n] - c[q[l]]) * S; &#x2F;&#x2F; 转移
+        while (l &lt; r) &#123; &#x2F;&#x2F; 维护凸壳
+            double k1 &#x3D; 1.0 * (f[q[r]] - f[q[r - 1]]) &#x2F; (c[q[r]] - c[q[r - 1]]);
+            double k2 &#x3D; 1.0 * (f[i] - f[q[r]]) &#x2F; (c[i] - c[q[r]]);
+            if (k2 - k1 &gt; eps) break;
+            r --;
+        &#125;
+        q[++ r] &#x3D; i; &#x2F;&#x2F; 插入新点
+    &#125;
+    printf(&quot;%lld\n&quot;, f[n]);
+    return 0;
+&#125;
+&#x2F;* 完结撒花！ *&#x2F;</code></pre></div></figure>
 
                 
               </div>
@@ -716,6 +720,10 @@ X_j = C_j
   });
 </script>
 
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

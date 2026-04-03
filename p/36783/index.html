@@ -74,6 +74,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -252,7 +256,7 @@
         
         
         
-          13 分钟
+          14 分钟
         
       </span>
     
@@ -305,7 +309,7 @@
 <p>会覆盖所有原生主题， <s>（但建议选择 Monokai，防止一些我也不知道的奇奇怪怪的问题）</s> 想使用原生主题请自行关闭样式。</p>
 <p>样式目前只自带 Mariana 、Darcula、Obsidian ，当然你可以通过更改颜色来个性化新主题，修改主题只需要把<code>:root{...}</code>的内容更改即可。</p>
 <p>源码（三个主题都在里面，<strong>全部都注释了，所以直接使用会一片白</strong>，想用那个去掉注释即可）。</p>
-<figure><div class="code-wrapper"><pre class="language-css" data-language="css"><code class="language-css"><span class="token comment">/* ==UserStyle==
+<figure><div class="code-wrapper"><pre class="language-css" data-language="css"><code class="language-css">&#x2F;* &#x3D;&#x3D;UserStyle&#x3D;&#x3D;
 @name           Bace
 @namespace      USO Archive
 @author         歪逼
@@ -314,9 +318,9 @@
 @license        NO-REDISTRIBUTION
 @preprocessor   uso
 
-==/UserStyle== */</span>
-<span class="token comment">/* Mariana */</span>
-<span class="token comment">/* :root &#123;
+&#x3D;&#x3D;&#x2F;UserStyle&#x3D;&#x3D; *&#x2F;
+&#x2F;* Mariana *&#x2F;
+&#x2F;* :root &#123;
     --normal-font: rgb(230, 230, 230);
     --left-and-right-paren: rgb(230, 230, 230);
     --keyword: rgb(198, 149, 198);
@@ -350,9 +354,9 @@
     --hljs-cpp-background: rgb(48, 56, 65);
     --hljs-literal: rgb(236, 96, 102);
     --hljs-selection: rgb(67, 76, 87);
-&#125; */</span>
-<span class="token comment">/* Darcula */</span>
-<span class="token comment">/* :root &#123;
+&#125; *&#x2F;
+&#x2F;* Darcula *&#x2F;
+&#x2F;* :root &#123;
     --normal-font : #a9b7c6;
     --left-and-right-paren : #a9b7c6;
     --keyword : #cc7832;
@@ -386,9 +390,9 @@
     --hljs-cpp-background : rgb(43,43,43);
     --hljs-literal : #6897bb;
     --hljs-selection :  rgb(33,66,131);
-&#125; */</span>
-<span class="token comment">/* Obsidian */</span>
-<span class="token comment">/* :root &#123;
+&#125; *&#x2F;
+&#x2F;* Obsidian *&#x2F;
+&#x2F;* :root &#123;
     --normal-font : rgb(224, 226, 228);
     --left-and-right-paren : rgb(232, 226, 183);
     --keyword : rgb(160, 130, 189);
@@ -422,160 +426,160 @@
     --hljs-cpp-background : rgb(41, 49, 52);
     --hljs-literal : rgb(255, 205, 34);
     --hljs-selection : rgb(64, 78, 81);
-&#125; */</span>
-<span class="token selector">.ace_identifier</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*普通字*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--normal-font<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_paren.ace_lparen,
-.ace_paren.ace_rparen</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*左右括号*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--left-and-right-paren<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_keyword,
+&#125; *&#x2F;
+.ace_identifier &#123;
+    &#x2F;*普通字*&#x2F;
+    color: var(--normal-font) !important;
+&#125;
+.ace_paren.ace_lparen,
+.ace_paren.ace_rparen &#123;
+    &#x2F;*左右括号*&#x2F;
+    color: var(--left-and-right-paren) !important;
+&#125;
+.ace_keyword,
 .ace_meta.ace_tag,
-.ace_storage</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 关键字*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--keyword<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_constant.ace_character,
+.ace_storage &#123;
+    &#x2F;* 关键字*&#x2F;
+    color: var(--keyword) !important;
+&#125;
+.ace_constant.ace_character,
 .ace_constant.ace_other,
-.ace_constant.ace_numeric</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 数字、尖括号内容*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--number-and-angle-brackets<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_constant.ace_language,
-.ace_string</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*引号内容*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--things-in-qutation-marks<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_storage.ace_type,
+.ace_constant.ace_numeric &#123;
+    &#x2F;* 数字、尖括号内容*&#x2F;
+    color: var(--number-and-angle-brackets) !important;
+&#125;
+.ace_constant.ace_language,
+.ace_string &#123;
+    &#x2F;*引号内容*&#x2F;
+    color: var(--things-in-qutation-marks) !important;
+&#125;
+.ace_storage.ace_type,
 .ace_support.ace_class,
-.ace_support.ace_type</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*变量、函数定义*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--define-var-and-function<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_support.ace_function</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 函数调用*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--using-function<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_string.ace_start,
-.ace_string.ace_end</span> <span class="token punctuation">&#123;</span>
-     <span class="token comment">/* 引号*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--qutation-marks<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_operator</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 运算符*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--operator<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_punctuation</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 逗号分号*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--comma-and-semicolons<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_comment</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 注释*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--note<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace-monokai,
-.ace_scroller</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 背景*/</span>
-    <span class="token property">background-color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--background<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_selection</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*选中文本背景颜色*/</span>
-    <span class="token property">background</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--text-that-choosed<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_marker-layer .ace_active-line</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 光标所在行背景颜色 */</span>
-    <span class="token property">background</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--line-that-cursor-in<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_gutter-cell,
-.ace_gutter</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 行数显示栏字体*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--font-of-row-number<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-    <span class="token comment">/* 行数显示栏背景*/</span>
-    <span class="token property">background</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--background-of-row-number<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace-tm .ace_cursor</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*光标颜色*/</span>
-    <span class="token property">color</span> <span class="token punctuation">:</span> white<span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_text</span> <span class="token punctuation">&#123;</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--normal-font<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace_gutter-active-line</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 光标所在行行数显示栏颜色修改 */</span>
-    <span class="token property">background-color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--bu-hui-fan-yi<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--you-bu-hui-fan<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.ace-tm .ace_indent-guide</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/*对齐线（因为不会改所以就把它删掉了/kk*/</span>
-    <span class="token property">background</span><span class="token punctuation">:</span><span class="token url"><span class="token function">url</span><span class="token punctuation">(</span><span class="token punctuation">)</span></span> right repeat-y<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token comment">/* 一下为 Markdown 代码框的主题修改 */</span>
-<span class="token selector">.hljs-keyword</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 关键字 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-keyword<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-meta,
-.hljs-section</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* include 的 # 和 define 、 typedef 的一些东西 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-meta<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-meta-keyword</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 定义函数时的函数名 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-meta-keyword<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-meta-string</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 定义函数时的变量 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-meta-string<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-function</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 定义函数*/</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-function<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-title</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 定义函数时的函数名 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-title<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-params</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 定义函数时的变量名 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-params<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-comment</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 注释 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-comment<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-built_in</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 不知道是什么awwa，但会影响 "std" 的颜色 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-built_in<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-string</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 引号内容，但好像数组定义也会变成这个颜色 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-string<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-number,
-.hljs-symbol</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 数字 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-number<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-literal</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 不清楚，但影响 "ios::sync_with_stdio(false)" 的 false */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-literal<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">pre.hljs,
+.ace_support.ace_type &#123;
+    &#x2F;*变量、函数定义*&#x2F;
+    color: var(--define-var-and-function) !important;
+&#125;
+.ace_support.ace_function &#123;
+    &#x2F;* 函数调用*&#x2F;
+    color: var(--using-function) !important;
+&#125;
+.ace_string.ace_start,
+.ace_string.ace_end &#123;
+     &#x2F;* 引号*&#x2F;
+    color: var(--qutation-marks) !important;
+&#125;
+.ace_operator &#123;
+    &#x2F;* 运算符*&#x2F;
+    color: var(--operator) !important;
+&#125;
+.ace_punctuation &#123;
+    &#x2F;* 逗号分号*&#x2F;
+    color: var(--comma-and-semicolons) !important;
+&#125;
+.ace_comment &#123;
+    &#x2F;* 注释*&#x2F;
+    color: var(--note) !important;
+&#125;
+.ace-monokai,
+.ace_scroller &#123;
+    &#x2F;* 背景*&#x2F;
+    background-color: var(--background) !important;
+&#125;
+.ace_selection &#123;
+    &#x2F;*选中文本背景颜色*&#x2F;
+    background: var(--text-that-choosed) !important;
+&#125;
+.ace_marker-layer .ace_active-line &#123;
+    &#x2F;* 光标所在行背景颜色 *&#x2F;
+    background: var(--line-that-cursor-in) !important;
+&#125;
+.ace_gutter-cell,
+.ace_gutter &#123;
+    &#x2F;* 行数显示栏字体*&#x2F;
+    color: var(--font-of-row-number) !important;
+    &#x2F;* 行数显示栏背景*&#x2F;
+    background: var(--background-of-row-number) !important;
+&#125;
+.ace-tm .ace_cursor &#123;
+    &#x2F;*光标颜色*&#x2F;
+    color : white!important;
+&#125;
+.ace_text &#123;
+    color: var(--normal-font) !important;
+&#125;
+.ace_gutter-active-line &#123;
+    &#x2F;* 光标所在行行数显示栏颜色修改 *&#x2F;
+    background-color: var(--bu-hui-fan-yi) !important;
+    color: var(--you-bu-hui-fan) !important;
+&#125;
+.ace-tm .ace_indent-guide &#123;
+    &#x2F;*对齐线（因为不会改所以就把它删掉了&#x2F;kk*&#x2F;
+    background:url() right repeat-y;
+&#125;
+&#x2F;* 一下为 Markdown 代码框的主题修改 *&#x2F;
+.hljs-keyword &#123;
+    &#x2F;* 关键字 *&#x2F;
+    color: var(--hljs-keyword) !important;
+&#125;
+.hljs-meta,
+.hljs-section &#123;
+    &#x2F;* include 的 # 和 define 、 typedef 的一些东西 *&#x2F;
+    color: var(--hljs-meta) !important;
+&#125;
+.hljs-meta-keyword &#123;
+    &#x2F;* 定义函数时的函数名 *&#x2F;
+    color: var(--hljs-meta-keyword) !important;
+&#125;
+.hljs-meta-string &#123;
+    &#x2F;* 定义函数时的变量 *&#x2F;
+    color: var(--hljs-meta-string) !important;
+&#125;
+.hljs-function &#123;
+    &#x2F;* 定义函数*&#x2F;
+    color: var(--hljs-function) !important;
+&#125;
+.hljs-title &#123;
+    &#x2F;* 定义函数时的函数名 *&#x2F;
+    color: var(--hljs-title) !important;
+&#125;
+.hljs-params &#123;
+    &#x2F;* 定义函数时的变量名 *&#x2F;
+    color: var(--hljs-params) !important;
+&#125;
+.hljs-comment &#123;
+    &#x2F;* 注释 *&#x2F;
+    color: var(--hljs-comment) !important;
+&#125;
+.hljs-built_in &#123;
+    &#x2F;* 不知道是什么awwa，但会影响 &quot;std&quot; 的颜色 *&#x2F;
+    color: var(--hljs-built_in) !important;
+&#125;
+.hljs-string &#123;
+    &#x2F;* 引号内容，但好像数组定义也会变成这个颜色 *&#x2F;
+    color: var(--hljs-string) !important;
+&#125;
+.hljs-number,
+.hljs-symbol &#123;
+    &#x2F;* 数字 *&#x2F;
+    color: var(--hljs-number) !important;
+&#125;
+.hljs-literal &#123;
+    &#x2F;* 不清楚，但影响 &quot;ios::sync_with_stdio(false)&quot; 的 false *&#x2F;
+    color: var(--hljs-literal) !important;
+&#125;
+pre.hljs,
 pre.hljs.cpp,
 pre.hljs.perl,
 pre.hljs.ruby,
 pre.hljs.cs,
 pre.hljs.makefile,
 pre.hljs.bash,
-pre.hljs.markdown</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 背景 */</span>
-    <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-code<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-    <span class="token property">background</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-cpp-background<span class="token punctuation">)</span> <span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-<span class="token selector">.hljs-keyword::selection,
+pre.hljs.markdown &#123;
+    &#x2F;* 背景 *&#x2F;
+    color: var(--hljs-code) !important;
+    background: var(--hljs-cpp-background) !important;
+&#125;
+.hljs-keyword::selection,
 .hljs-meta::selection,
 .hljs-meta-keyword::selection,
 .hljs-meta-string::selection,
@@ -589,10 +593,10 @@ pre.hljs.markdown</span> <span class="token punctuation">&#123;</span>
 .hljs-literal::selection,
 .hljs-code::selection,
 .hljs-symbol::selection,
-code::selection</span> <span class="token punctuation">&#123;</span>
-    <span class="token comment">/* 选中字 */</span>
-    <span class="token property">background</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--hljs-selection<span class="token punctuation">)</span><span class="token important">!important</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre></div></figure>
+code::selection &#123;
+    &#x2F;* 选中字 *&#x2F;
+    background: var(--hljs-selection)!important;
+&#125;</code></pre></div></figure>
 <p><s>应该没人会用吧。</s></p>
 
                 
@@ -912,6 +916,10 @@ code::selection</span> <span class="token punctuation">&#123;</span>
   });
 </script>
 
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" ></script>
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
 

@@ -57,6 +57,10 @@
 
 
 
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -310,7 +314,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/p/2f40ea11/" target="_self">
         <div>
-          XOR A ^ B ^ B = A A ^ B ^ C ^ B = A ^ C 原理很简单，没什么好说的。  One-time Pad 实际上就是一个异或加密，但是满足两个就绝对安全：  key 的传输是安全的 只使用一次这个 key  但是不满足这两个就不安全。第一道 key 泄露了，后两道题的 key 重复使用。  AES AES，全称 Advance Encryption Standard
+          XOR A ^ B ^ B = A A ^ B ^ C ^ B = A ^ C 原理很简单，没什么好说的。 使用 PyCryptoDome 库进行相关操作。 from Crypto.Util.strxor import strxor strxor(&quot;a&quot;.encode(), &quot;a&quot;.encode()); # b&#39;\x00&#39;&#39;  On
         </div>
       </a>
 
@@ -396,7 +400,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/p/7fbeb27/" target="_self">
         <div>
-          bbs_fmt (my_venv) ➜  fuduji checksec bss_fmt [*] '/home/yb/tmp/xctf/fuduji/bss_fmt'     Arch:       amd64-64-little     RELRO:      Full RELRO     Stack:      Canary found     NX:         NX enabled
+          bbs_fmt (my_venv) ➜  fuduji checksec bss_fmt [*] &#39;&#x2F;home&#x2F;yb&#x2F;tmp&#x2F;xctf&#x2F;fuduji&#x2F;bss_fmt&#39;     Arch:       amd64-64-little     RELRO:      Full RELRO     Stack:      Ca
         </div>
       </a>
 
@@ -438,7 +442,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/p/134d140d/" target="_self">
         <div>
-          first_fit.c #include &lt;stdio.h> #include &lt;stdlib.h> #include &lt;string.h>  int main() &#123;         fprintf(stderr, "This file doesn't demonstrate an attack, but shows the nature of glibc's al
+          first_fit.c #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; #include &lt;string.h&gt;  int main() &#123;         fprintf(stderr, &quot;This file doesn&#39;t demonstrate an attack, but shows the na
         </div>
       </a>
 
@@ -677,7 +681,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/p/f09f7889/" target="_self">
         <div>
-          对着 OIWIKI 复习一遍。  C++ 到考场在 dev 添加 -std=c++14 -O2。  读入优化 inline int read() &#123; 	int x = 0, f = 0; char c = 0; 	while (!isdigit(c)) f |= c == '-', c = getchar(); 	while (isdigit(c)) x = x * 10 + (c &a
+          对着 OIWIKI 复习一遍。  C++ 到考场在 dev 添加 -std=c++14 -O2。  读入优化 inline int read() &#123; 	int x &#x3D; 0, f &#x3D; 0; char c &#x3D; 0; 	while (!isdigit(c)) f |&#x3D; c &#x3D;&#x3D; &#39;-&#39;, c &#x3D; getcha
         </div>
       </a>
 
